@@ -1,2 +1,2 @@
-# study-note
-study-note
+
+记录个人的学习笔记
