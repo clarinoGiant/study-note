@@ -1,11 +1,14 @@
 - [1. 准备条件](#1-准备条件)
 - [2. 详细注解](#2-详细注解)
   - [2.1 @Required](#21-required)
-  - [2.2 @Autowired](#22-autowired)
+  - [2.2 @Autowired使用场景](#22-autowired使用场景)
   - [2.3 @Primary](#23-primary)
   - [2.4 @Qualifier](#24-qualifier)
-  - [2.5 JSR250 @Resource](#25-jsr250-resource)
-  - [2.6  @Value](#26--value)
+  - [2.5 JSR250](#25-jsr250)
+    - [@Resource（同Autowired）](#resource同autowired)
+    - [@PostConstruct](#postconstruct)
+    - [@PreDestroy](#predestroy)
+  - [2.6  @Value（可注入外部配置文件属性）](#26--value可注入外部配置文件属性)
 - [3.  Classpath Scanning and Managed Components](#3--classpath-scanning-and-managed-components)
   - [3.1 配置自动扫描路径](#31-配置自动扫描路径)
   - [3.2 指定Bean的名称](#32-指定bean的名称)
@@ -326,7 +329,7 @@ public class MainApp {
 
 
 
-## 2.6  @Value（注入外部配置文件属性）
+## 2.6  @Value（可注入外部配置文件属性）
 
 @Value is typically used to inject externalized properties:
 
