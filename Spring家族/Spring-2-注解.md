@@ -1,26 +1,4 @@
-- [1. 准备条件](#1-准备条件)
-- [2. 详细注解](#2-详细注解)
-  - [2.1 @Required](#21-required)
-  - [2.2 @Autowired使用场景](#22-autowired使用场景)
-  - [2.3 @Primary](#23-primary)
-  - [2.4 @Qualifier](#24-qualifier)
-  - [2.5 JSR250](#25-jsr250)
-    - [@Resource（同Autowired）](#resource同autowired)
-    - [@PostConstruct](#postconstruct)
-    - [@PreDestroy](#predestroy)
-  - [2.6  @Value（可注入外部配置文件属性）](#26--value可注入外部配置文件属性)
-- [3.  Classpath Scanning and Managed Components](#3--classpath-scanning-and-managed-components)
-  - [3.1 配置自动扫描路径](#31-配置自动扫描路径)
-  - [3.2 指定Bean的名称](#32-指定bean的名称)
-  - [3.3 指定bean Scope(prototype等)](#33-指定bean-scopeprototype等)
-- [3. JSR330 注解](#3-jsr330-注解)
-- [4. Java-based Container注解](#4-java-based-container注解)
-  - [4.1 Basic Concepts:@Bean **and** @Configuration](#41-basic-conceptsbean-and-configuration)
-  - [4.2 完全不使用XML配置bean](#42-完全不使用xml配置bean)
-  - [4.3 AnnotationConfigApplicationContext](#43-annotationconfigapplicationcontext)
-    - [1. register(Class<?>…)](#1-registerclass)
-    - [2. scan(String…)](#2-scanstring)
-    - [3. AnnotationConfigWebApplicationContext](#3-annotationconfigwebapplicationcontext)
+[TOC]
 
 
 # 1. 准备条件
