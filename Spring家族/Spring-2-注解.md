@@ -66,156 +66,158 @@ public class SimpleMovieLister {
 }
 ```
 
-This annotation indicates that the **affected bean property must be populated at configuration time,** through an explicit property value in a bean definition or through autowiring. **The container throws an exception if the affected bean property has not been populated.** This allows for eager and explicit failure, avoiding NullPointerException instances or the like later on. We still recommend that you put assertions into the bean class itself (for example, into an init method). Doing so enforces those required references and values even when you use the class outside of a container.
+This annotation indicates that the **affected bean property must be populated at configuration time,** through an explicit property value in a bean definition or through autowiring. 
 
-**The @Required annotation is formally deprecated as of Spring Framework 5.1,** in favor of using constructor injection for required settings (or a custom implementation of InitializingBean.afterPropertiesSet() along with bean property setter methods).
+**The container throws an exception if the affected bean property has not been populated.** This allows for eager and explicit failure, avoiding NullPointerException instances or the like later on. 
+
+>  The @Required annotation is formally deprecated as of Spring Framework 5.1,** in favor of using constructor injection for required settings (or a custom implementation of InitializingBean.afterPropertiesSet() along with bean property setter methods).
 
 
 
-## 2.2 @Autowired
+## 2.2 @Autowired使用场景
 
-1.  Apply the @Autowired annotation to **constructors**, as the following example shows:
+1. 应用到构造方法
 
    ```java
-public class MovieRecommender {
-  private final CustomerPreferenceDao customerPreferenceDao;
-       @Autowired
+   public class MovieRecommender {
+     private final CustomerPreferenceDao customerPreferenceDao;
+     
+     @Autowired
      public MovieRecommender(CustomerPreferenceDao customerPreferenceDao) {
-     this.customerPreferenceDao = customerPreferenceDao;
+     	this.customerPreferenceDao = customerPreferenceDao;
      }
      // ...
    } 
    ```
 
-2. Apply the @Autowired annotation to *traditional* **setter** methods, 
-
-   ```
-public class SimpleMovieLister {
-  private MovieFinder movieFinder;
-       @Autowired
-     public void setMovieFinder(MovieFinder movieFinder) {
-     this.movieFinder = movieFinder;
-     }
-     // ...
-   }
-    
-   ```
-
-3. Apply the annotation to methods with **arbitrary names and multiple arguments**, 
+2. 应用到setter方法
 
    ```java
-public class MovieRecommender {
-  private MovieCatalog movieCatalog;
-  private CustomerPreferenceDao customerPreferenceDao;
+   public class SimpleMovieLister {
+     private MovieFinder movieFinder;
      
-       @Autowired
-     public void prepare(MovieCatalog movieCatalog,
-     CustomerPreferenceDao customerPreferenceDao) {
-     this.movieCatalog = movieCatalog;
-     this.customerPreferenceDao = customerPreferenceDao;
+     @Autowired
+     public void setMovieFinder(MovieFinder movieFinder) {
+     	this.movieFinder = movieFinder;
+     }
+     // ...
+   } 
+   ```
+
+3. 应用到带有参数的普通方法上
+
+   ```java
+   public class MovieRecommender {
+     private MovieCatalog movieCatalog;
+     private CustomerPreferenceDao customerPreferenceDao;
+     
+     @Autowired
+     public void prepare(MovieCatalog movieCatalog,  CustomerPreferenceDao customerPreferenceDao) {
+     	this.movieCatalog = movieCatalog;
+     	this.customerPreferenceDao = customerPreferenceDao;
      }
      // ...
    }
     
    ```
 
-4. Apply @Autowired to fields as well and even mix it with constructors
+4. 应用到字段上和构造器上
 
    ```java
-public class MovieRecommender {
-  private final CustomerPreferenceDao customerPreferenceDao;
-    
-  @Autowired
-  private MovieCatalog movieCatalog;
-    
-  @Autowired
-  public MovieRecommender(CustomerPreferenceDao customerPreferenceDao) {
-  this.customerPreferenceDao = customerPreferenceDao;
-  }
-  // ...
-}
+   public class MovieRecommender {
+     private final CustomerPreferenceDao customerPreferenceDao;
+     
+     @Autowired
+     private MovieCatalog movieCatalog;
+       
+     @Autowired
+     public MovieRecommender(CustomerPreferenceDao customerPreferenceDao) {
+     	this.customerPreferenceDao = customerPreferenceDao;
+     }
+     // ...
+   } 
    ```
 
+   
 
+   ## 2.3 @Primary
 
-## 2.3 @Primary
+   接口有2个不同实现时，查找冲突，使用@Autowired注解时会报org.springframework.beans.factory.NoUniqueBeanDefinitionException异常
 
-当一个接口有2个不同实现时,使用@Autowired注解时会报org.springframework.beans.factory.NoUniqueBeanDefinitionException异常信息
+   测试：
 
-测试：
+   ``` java
+   public interface Pet {
+       public void print();
+   }
+   
+   @Component
+   public class Cat extends Pet {
+       public void print(){
+           System.out.println("cat");
+       }
+   }
+   
+   //@Primary
+   @Component
+   public class Dog extends Pet {
+       public void print(){
+           System.out.println("Dog");
+       }
+   }
+   
+   @Component
+   @Setter
+   @Getter
+   public class User {
+   
+       @Autowired
+       private Pet pet;
+   
+       public void test()
+       {
+           pet.print();
+       }
+   }
+   ```
 
-```java
-public interface Pet {
-    public void print();
-}
+   beans.xml
 
-@Component
-public class Cat extends Pet {
-    public void print(){
-        System.out.println("cat");
-    }
-}
+   ``` java
+   <?xml version="1.0" encoding="UTF-8"?>
+       <beans xmlns="http://www.springframework.org/schema/beans"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns:context="http://www.springframework.org/schema/context"
+               xsi:schemaLocation="http://www.springframework.org/schema/beans
+               https://www.springframework.org/schema/beans/spring-beans.xsd
+               http://www.springframework.org/schema/context
+               https://www.springframework.org/schema/context/spring-context.xsd"  >
+   
+           <context:component-scan base-package="com.test" />
+           <context:annotation-config />
+   
+       </beans>
+   ```
 
-//@Primary
-@Component
-public class Dog extends Pet {
-    public void print(){
-        System.out.println("Dog");
-    }
-}
+   测试类：
 
-@Component
-@Setter
-@Getter
-public class User {
+   ``` java
+   public class MainApp {
+       public static void main(String[] args) {
+           ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
+           User user = context.getBean("user", User.class);
+           user.test();
+       }
+   }
+   ```
 
-    @Autowired
-    private Pet pet;
+   Cat和Dog作为Pet的两个实现类，需选择需要的子类通过@Primary指定优先级，否则会提示
 
-    public void test()
-    {
-        pet.print();
-    }
-}
-```
+   ``` bash
+   org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'com.test.pojo.Pet' available: expected single matching bean but found 2: cat,dog
+   ```
 
-beans.xml
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xmlns:context="http://www.springframework.org/schema/context"
-        xsi:schemaLocation="http://www.springframework.org/schema/beans
-        https://www.springframework.org/schema/beans/spring-beans.xsd
-        http://www.springframework.org/schema/context
-        https://www.springframework.org/schema/context/spring-context.xsd"  >
-
-    <context:component-scan base-package="com.test" />
-    <context:annotation-config />
-
-</beans>
-```
-
-测试类：
-
-```java
-public class MainApp {
-    public static void main(String[] args) {
-        ApplicationContext context = new ClassPathXmlApplicationContext("beans.xml");
-        User user = context.getBean("user", User.class);
-        user.test();
-    }
-}
-```
-
-Cat和Dog作为Pet的两个实现类，可以选择需要的子类通过@Primary指定优先级，否则会提示
-
-```bash
-org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'com.test.pojo.Pet' available: expected single matching bean but found 2: cat,dog
-```
-
-
+   
 
 ## 2.4 @Qualifier
 
@@ -294,19 +296,37 @@ public class MainApp {
 
 
 
-## 2.5 JSR250 @Resource
+## 2.5 JSR250
 
 [spring](http://lib.csdn.net/base/javaee)不但支持自己定义的@Autowired注解，还支持几个由JSR-250规范定义的注解，它们分别是@Resource、@PostConstruct以及@PreDestroy。
-　　@Resource的作用相当于@Autowired，只不过@Autowired按byType自动注入，而@Resource默认按 byName自动注入罢了。@Resource有两个属性是比较重要的，分是name和type，Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。所以如果使用name属性，则使用byName的自动注入策略，而使用type属性时则使用byType自动注入策略。如果既不指定name也不指定type属性，这时将通过反射机制使用byName自动注入策略。
-　　@Resource装配顺序
+
+### @Resource（同Autowired）
+
+@Resource的作用相当于@Autowired，只不过@Autowired按byType自动注入，而@Resource默认按 byName自动注入罢了。
+
+@Resource有两个属性是比较重要的，分是name和type，
+
+- Spring将@Resource注解的name属性解析为bean的名字，而type属性则解析为bean的类型。
+
+- 使用name属性，则使用byName的自动注入策略
+- 使用type属性时则使用byType自动注入策略。
+
+- 既不指定name也不指定type属性，这时将通过反射机制使用byName自动注入策略。
+
+**@Resource装配顺序**
+
 　　1. 如果同时指定了name和type，则从Spring上下文中找到唯一匹配的bean进行装配，找不到则抛出异常
 　　2. 如果指定了name，则从上下文中查找名称（id）匹配的bean进行装配，找不到则抛出异常
 　　3. 如果指定了type，则从上下文中找到类型匹配的唯一bean进行装配，找不到或者找到多个，都会抛出异常
 　　4. 如果既没有指定name，又没有指定type，则自动按照byName方式进行装配；如果没有匹配，则回退为一个原始类型进行匹配，如果匹配则自动装配；
 
+### @PostConstruct
+
+### @PreDestroy
 
 
-## 2.6  @Value
+
+## 2.6  @Value（注入外部配置文件属性）
 
 @Value is typically used to inject externalized properties:
 
@@ -536,10 +556,6 @@ public class MovieFinderImpl implements MovieFinder {
 
 # 4. Java-based Container注解
 
-
-
-
-
 ## 4.1 Basic Concepts:@Bean **and** @Configuration
 
 @Configuration：annotated classes
@@ -574,9 +590,13 @@ public class AppConfig {
 
 ## 4.3 AnnotationConfigApplicationContext 
 
-​	与@Configurationi配合使用，见4.2章节
+​	与@Configuration配合使用，见4.2章节
 
-​	In much the same way that Spring XML files are used as input when instantiating a **ClassPathXmlApplicationContext**, you can **use @Configuration classes as input when instantiating an AnnotationConfigApplicationContext.** 
+​	In much the same way that Spring XML files are used as input when instantiating a **ClassPathXmlApplicationContext**, 
+
+   **ClassPathXmlApplicationContext**:  Spring XML形式配置
+
+   **AnnotationConfigApplicationContext**：@Configuration配置
 
 ### 1. register(Class<?>…)
 
@@ -619,8 +639,3 @@ public static void main(String[] args) {
 
 
 ### 3. AnnotationConfigWebApplicationContext
-
-
-
-
-
