@@ -10,11 +10,34 @@ Spring官网
 
 https://www.bilibili.com/video/BV1y7411j78K?from=search&seid=17566126572410637701
 
-![image-20210301230656706](Spring Boot.assets/image-20210301230656706.png)
+``` properties
+@SpringBootApplication
+@Controller/RestController/RequestMapping/RequestParam/PathVariable
+@GetMapping/PutMapping/DeleteMapping/RequestBody/ResponseBody
+@CrossOrigin
+@Configuration/Bean/Service/Component
+@Autowired/Resource/Autowired+Qualifier/Values
+```
 
+FreeMarker模板依赖
 
+``` xml
+<dependency>
+    <groupdId>org.springframework.boot</groupdId>
+    <artifactId>spring-boot-starter-freemarker</artifactId>
+</dependency>
+```
 
-![image-20210301231822085](Spring Boot.assets/image-20210301231822085.png)
+applications.properties配置
+
+``` pro
+server.port=8080
+#spring.mvc.view.prefix=/
+#spring.mvc.view.suffix=.html
+#freeMarker
+#spring.freemarker.suffix=.html
+#spring.freemarker.template-load-path=classpath:/static/
+```
 
 
 
