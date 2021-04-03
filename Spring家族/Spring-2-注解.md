@@ -1,3 +1,25 @@
+- [1. 准备条件](#1-准备条件)
+- [2. 详细注解](#2-详细注解)
+  - [2.1 @Required](#21-required)
+  - [2.2 @Autowired](#22-autowired)
+  - [2.3 @Primary](#23-primary)
+  - [2.4 @Qualifier](#24-qualifier)
+  - [2.5 JSR250 @Resource](#25-jsr250-resource)
+  - [2.6  @Value](#26--value)
+- [3.  Classpath Scanning and Managed Components](#3--classpath-scanning-and-managed-components)
+  - [3.1 配置自动扫描路径](#31-配置自动扫描路径)
+  - [3.2 指定Bean的名称](#32-指定bean的名称)
+  - [3.3 指定bean Scope(prototype等)](#33-指定bean-scopeprototype等)
+- [3. JSR330 注解](#3-jsr330-注解)
+- [4. Java-based Container注解](#4-java-based-container注解)
+  - [4.1 Basic Concepts:@Bean **and** @Configuration](#41-basic-conceptsbean-and-configuration)
+  - [4.2 完全不使用XML配置bean](#42-完全不使用xml配置bean)
+  - [4.3 AnnotationConfigApplicationContext](#43-annotationconfigapplicationcontext)
+    - [1. register(Class<?>…)](#1-registerclass)
+    - [2. scan(String…)](#2-scanstring)
+    - [3. AnnotationConfigWebApplicationContext](#3-annotationconfigwebapplicationcontext)
+
+
 # 1. 准备条件
 
 beans.xml配置
@@ -25,6 +47,8 @@ The implicitly registered post-processors include
 
 - RequiredAnnotationBeanPostProcessor.
 
+
+
 # 2. 详细注解
 
 ## 2.1 @Required
@@ -45,6 +69,8 @@ public class SimpleMovieLister {
 This annotation indicates that the **affected bean property must be populated at configuration time,** through an explicit property value in a bean definition or through autowiring. **The container throws an exception if the affected bean property has not been populated.** This allows for eager and explicit failure, avoiding NullPointerException instances or the like later on. We still recommend that you put assertions into the bean class itself (for example, into an init method). Doing so enforces those required references and values even when you use the class outside of a container.
 
 **The @Required annotation is formally deprecated as of Spring Framework 5.1,** in favor of using constructor injection for required settings (or a custom implementation of InitializingBean.afterPropertiesSet() along with bean property setter methods).
+
+
 
 ## 2.2 @Autowired
 
@@ -77,26 +103,25 @@ public class SimpleMovieLister {
 
 3. Apply the annotation to methods with **arbitrary names and multiple arguments**, 
 
-   ```
+   ```java
 public class MovieRecommender {
   private MovieCatalog movieCatalog;
   private CustomerPreferenceDao customerPreferenceDao;
+     
+       @Autowired
+     public void prepare(MovieCatalog movieCatalog,
+     CustomerPreferenceDao customerPreferenceDao) {
+     this.movieCatalog = movieCatalog;
+     this.customerPreferenceDao = customerPreferenceDao;
+     }
+     // ...
+   }
     
    ```
 
-  @Autowired
-  public void prepare(MovieCatalog movieCatalog,
-  CustomerPreferenceDao customerPreferenceDao) {
-  this.movieCatalog = movieCatalog;
-  this.customerPreferenceDao = customerPreferenceDao;
-  }
-  // ...
-}
-   ```
+4. Apply @Autowired to fields as well and even mix it with constructors
 
-4. **Apply @Autowired to fields as well and even mix it with constructors,**
-
-​```java
+   ```java
 public class MovieRecommender {
   private final CustomerPreferenceDao customerPreferenceDao;
     
@@ -110,6 +135,8 @@ public class MovieRecommender {
   // ...
 }
    ```
+
+
 
 ## 2.3 @Primary
 
@@ -187,6 +214,8 @@ Cat和Dog作为Pet的两个实现类，可以选择需要的子类通过@Primary
 ```bash
 org.springframework.beans.factory.NoUniqueBeanDefinitionException: No qualifying bean of type 'com.test.pojo.Pet' available: expected single matching bean but found 2: cat,dog
 ```
+
+
 
 ## 2.4 @Qualifier
 
