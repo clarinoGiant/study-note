@@ -30,12 +30,6 @@ native void notifyAll();
 
 
 
-
-
-
-
-
-
 #### 2.2 高阶用法（JDK 1.5)
 
 ##### 2.2.1 接口Lock.lock/tryLock/unlock
@@ -254,6 +248,14 @@ take()  // 阻塞直到有数据可以获取
 
 
 
+
+## 参考：源码类图
+
+### Executor/Executors/ExecutorService
+
+ **ExecutorService pool = Executors.newFixedThreadPool(5);**  
+
+<img src="Java多线程.assets/1617594293667.png" alt="1617594293667"  />
 
 
 
