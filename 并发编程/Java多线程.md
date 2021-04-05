@@ -255,7 +255,7 @@ take()  // 阻塞直到有数据可以获取
 
  **ExecutorService pool = Executors.newFixedThreadPool(5);**  
 
-<img src="Java多线程.assets/1617594293667.png" alt="1617594293667"  />
+![1617595062141](Java多线程.assets/1617595062141.png)
 
 
 
