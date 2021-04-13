@@ -1,12 +1,12 @@
-# Oracle官网宝藏
+# 一、参考文档
+
+## 1. Oracle官网
 
 以官网JDK15相关链接说明。https://docs.oracle.com/en/java/javase/15/
 
 ![image-20210308231120043](Java基础.assets/image-20210308231120043.png)
 
-
-
-## 1. Java Tutorials(入门学习路线)
+## 2. Java Tutorials(入门学习路线)
 
 https://docs.oracle.com/javase/tutorial/tutorialLearningPaths.html
 
@@ -16,7 +16,7 @@ https://docs.oracle.com/javase/tutorial/tutorialLearningPaths.html
 
 
 
-# 反射
+# 二、反射
 
 
 
@@ -24,7 +24,7 @@ https://docs.oracle.com/javase/tutorial/tutorialLearningPaths.html
 
 
 
-# 注解
+# 三、注解
 
 Package：  java.lang.annotation
 
@@ -32,11 +32,11 @@ Package：  java.lang.annotation
 
 ![image-20210310225423997](Java基础.assets/image-20210310225423997.png)
 
-## 1、注解框架
+## 3.1 注解框架
 
 未列举异常相关
 
-### 1.1 Interface汇总
+### 1 Interface汇总
 
 **Annotation**接口： The common interface extended by all annotation types.
 
@@ -44,7 +44,7 @@ Package：  java.lang.annotation
 
 ![image-20210310224152033](Java基础.assets/image-20210310224152033.png)
 
-### 1.2 Enum汇总
+### 2 Enum汇总
 
 - **ElementType**
 
@@ -58,25 +58,25 @@ Package：  java.lang.annotation
 
 ![image-20210310224605411](Java基础.assets/image-20210310224605411.png)
 
-### 1.3 Annotation Types汇总
+### 3 Annotation Types汇总
 
 ![image-20210310224726075](Java基础.assets/image-20210310224726075.png) 
 
-#### 1.3.1 Retention
+#### 3.1 Retention
 
 ​	与RetentionPolicy配合使用
 
-#### 1.3.2 Target
+#### 3.2 Target
 
 ​	与ElementType配合使用
 
-## 2、测试样例
+## 3.2 测试样例
 
 
 
 
 
-## 3、作用机理
+## 3.3 作用机理
 
 1、自定义注解
 
@@ -167,9 +167,27 @@ method annotation: @com.demo.annotation.MyAnnotation(name=wangwu, value=456)
 
 
 
-# 基础知识
+# 四、集合
 
-## 1. 强、软、弱、虚引用
+## 4.1 集合分类
+
+
+
+
+
+## 4.2 Collections工具类
+
+
+
+## 4.3 样例
+
+​	Collections.singletonList("localhost:9092")
+
+​	Collections.emptyList()
+
+# 五、零碎知识
+
+## 5.1  强、软、弱、虚引用
 
 > 涉及GC时应用的回收处理方式
 
@@ -193,7 +211,7 @@ method annotation: @com.demo.annotation.MyAnnotation(name=wangwu, value=456)
 
 WeakHashMap：弱引用
 
-## 2. 类初始化顺序
+## 5.2  类初始化顺序
 
  **参考：https://zhuanlan.zhihu.com/p/62212361** 
 
@@ -302,7 +320,9 @@ static field B
 
 
 
-## 3. 字符串操作
+## 5.3 字符串操作
+
+### 1 字符串拼接
 
 **1、StringJoiner 拼接（需要JDK1.8）**
 
