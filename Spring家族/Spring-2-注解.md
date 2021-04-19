@@ -1,7 +1,7 @@
 [TOC]
 
 
-# 1. 准备条件
+# 一. 准备条件
 
 beans.xml配置
 
@@ -30,7 +30,7 @@ The implicitly registered post-processors include
 
 
 
-# 2. 详细注解
+# 二. 详细注解
 
 ## 2.1 @Required
 
@@ -281,7 +281,7 @@ public class MainApp {
 
 [spring](http://lib.csdn.net/base/javaee)不但支持自己定义的@Autowired注解，还支持几个由JSR-250规范定义的注解，它们分别是@Resource、@PostConstruct以及@PreDestroy。
 
-### @Resource（同Autowired）
+### @Resource（vs Autowired）
 
 @Resource的作用相当于@Autowired，只不过@Autowired按byType自动注入，而@Resource默认按 byName自动注入罢了。
 
@@ -404,7 +404,7 @@ BBB
 
 
 
-# 3.  Classpath Scanning and Managed Components
+# 三.  Classpath Scanning and Managed Components
 
 ## 3.1 配置自动扫描路径
 
@@ -425,9 +425,7 @@ BBB
 </beans>
 ```
 
-The use of <context:component-scan> implicitly enables the functionality of <context:annotation-config>. There is usually no need to include the <context:annotation-config> element when using <context:component-scan> 
-
-​	然后通过ClassPathApplication(beans.xml) 初始化
+​		The use of <context:component-scan> implicitly enables the functionality of <context:annotation-config>. There is usually no need to include the <context:annotation-config> element when using <context:component-scan> 	
 
 **方法2：**@ComponentScan 注解方式
 
@@ -523,7 +521,7 @@ public class MovieFinderImpl implements MovieFinder {
 
 
 
-# 3. JSR330 注解
+# 四. JSR330 注解
 
 
 
@@ -535,9 +533,9 @@ public class MovieFinderImpl implements MovieFinder {
 
 
 
-# 4. Java-based Container注解
+# 五. Java-based Container注解
 
-## 4.1 Basic Concepts:@Bean **and** @Configuration
+## 4.1 @Bean **and** @Configuration
 
 @Configuration：annotated classes
 
@@ -571,38 +569,38 @@ public class AppConfig {
 
 ## 4.3 AnnotationConfigApplicationContext 
 
-​	与@Configuration配合使用，见4.2章节
+​		与@Configuration配合使用，见4.2章节
 
-​	In much the same way that Spring XML files are used as input when instantiating a **ClassPathXmlApplicationContext**, 
+​		- ClassPathXmlApplicationContext:   Spring XML形式配置
 
-   **ClassPathXmlApplicationContext**:  Spring XML形式配置
+ 	  - AnnotationConfigApplicationContext：@Configuration配置
 
-   **AnnotationConfigApplicationContext**：@Configuration配置
-
-### 1. register(Class<?>…)
+1. **register(Class<?>…)** 
 
 ​	You can instantiate an AnnotationConfigApplicationContext by using a no-arg constructor and then configure it by using the register() method. 
 
  ```java
 public static void main(String[] args) {
-  AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-  ctx.register(AppConfig.class, OtherConfig.class);
-  ctx.register(AdditionalConfig.class);
-  ctx.refresh();
-  MyService myService = ctx.getBean(MyService.class);
-  myService.doStuff();
+      AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+      ctx.register(AppConfig.class, OtherConfig.class);
+      ctx.register(AdditionalConfig.class);
+      ctx.refresh();
+      MyService myService = ctx.getBean(MyService.class);
+      myService.doStuff();
 }
  ```
 
-### 2. scan(String…)
+**2. onfresh()**
 
-To enable component scanning, you can annotate your @Configuration class as follows
+
+
+**3. scan()**
 
 ```java
 @Configuration
 @ComponentScan(basePackages = "com.acme") ①
 public class AppConfig {
-  ...
+      ...
 }
 ```
 
@@ -610,13 +608,30 @@ java
 
 ```java
 public static void main(String[] args) {
-  AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-  ctx.scan("com.acme");  // 对比上章节的Register实现
-  ctx.refresh();
-  MyService myService = ctx.getBean(MyService.class);
+      AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
+      ctx.scan("com.acme");  // 对比上章节的Register实现
+      ctx.refresh();
+      MyService myService = ctx.getBean(MyService.class);
 }
 ```
 
 
 
-### 3. AnnotationConfigWebApplicationContext
+## 4.2 AnnotationConfigWebApplicationContext
+
+
+
+# 六. 其他注解
+
+## @Conditional
+
+
+
+```java
+@Conditional(ConditionDistributedEmbedStorage.class)
+    @Bean
+    public CurcuitFilter transferToLeader() {
+        return new CurcuitFilter();
+}    
+```
+
