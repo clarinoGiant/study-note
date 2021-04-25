@@ -288,7 +288,7 @@ skip_name_resolve
 
 # 三、实战演练
 
-### 表结构和查询语句
+## 1. 表结构和查询语句
 
 假如有如下表结构
 
@@ -326,7 +326,7 @@ mysql> explain select msg_id from circlemessage_idx_0 where  to_id = 113487 and 
 1 row in set (0.00 sec)
 ```
 
-### 问题分析
+## 2. 问题分析
 
 通过上面两个执行计划可以发现当没有`msg_id >= xxx这`个查询条件的时候，检索的rows要少很多，并且两者查询的时候都用到了索引，而且用到的还只是主键索引。那说明索引应该是不合理的，没有发挥最大作用。
 
@@ -340,7 +340,7 @@ mysql> explain select msg_id from circlemessage_idx_0 where  to_id = 113487 and 
 
  请注意，`from_id != xxx`这样的语句，是无法用到索引的。只有`from_id = xxx`就可以用到所以，因此from id 的索引其实可以不用，建立索引的时候就要考虑清楚 
 
-### 如何优化
+## 3. 如何优化
 
 既然知道索引不合理，那么就要分析并调整索引。一般而言，我们既然要从单表里面查询，那么就需要能够知道大体，单表里面大致会有哪些数据，现在的量级大概是多少。
 
@@ -357,4 +357,63 @@ mysql> explain select msg_id from circlemessage_idx_0 where  to_id = 113487 and 
 针对此业务场景，最好能够再加上circle_id索引，这样可以快速索引；这样就得到了新的联合索引(to_id,circle_id)的索引，然后，因为要找msg_id，为此，在此基础上，再加上msg_id。最终得到的联合索引为(to_id,circle_id,msg_id)；这样的话，就能够快速检索这样的查询语句了：`where to_id = xxx and circle_id = xxx and msgId >= xxx`
 
 当然，索引的建立，也不是说某个sql 语句需要啥索引，就建立某个联合索引，这样的话，索引太多的话，写的性能受影响（插入、删除、修改），然后存储空间也会相应增大；另外mysql在运行时也会消耗资源维护索引，所以，索引并不是越多越好，需要结合查询最频繁、最影响性能的sql来建立合适的索引。需要再说明的是，一个联合索引或者一组主键就是一个btree，多个索引就是多个btree
+
+
+
+
+
+# 四、Mysql基础开发
+
+## 1. 原始用法
+
+```java
+String url = "jdbc::mysql://localhost:3306/jdbc?useUnicode=true&characterEncoding=utf-8"
+String username = "root";
+String password = "123456";
+
+Class.forName("com.mysql.jdbc.Driver");
+Connection conn = DriverManager.getConnection(url, username,password);
+Statement stat = conn.createStatement();
+
+String sql = "delete from users where id = 4";
+
+Result rs = stat.executeQuery(sql);
+
+while(rs.next())
+{
+    
+}
+
+rs.close();
+stat.close();
+conn.close();    
+```
+
+## 2. 进阶版
+
+​     url+username+password从配置文件读取，且password是加密的（代码中使用算法解密）
+
+​	使用Properties类读取
+
+## 3. Statement的几种用法
+
+- executeQuery：
+- executeUpdate：
+
+## 4. 预编译SQL，解决注入问题
+
+
+
+```java
+String sql = "insert into user(id, name, password, email) values(?,?,?,?);"
+    
+PreparedStatement preparedStat = conn.prepareStatement(sql);
+preparedStat.setInt(1, 1);
+preparedStat.setString(2, "admin");
+preparedStat.setString(3, "123456");
+preparedStat.setString(4, "123@xx.com");
+
+preparedStat.executeUpdate()
+preparedStat.close();  
+```
 

@@ -1,6 +1,77 @@
-# Servlet
+# 参考
 
-## IDEA创建基础WEB程序
+【狂神说Java】JavaWeb入门到实战
+
+
+
+# web.xml构成
+
+典型样例：
+
+```xml
+<context-pararm>
+    <param-name></param-name>
+    <param-value></param-value>
+</context-pararm>
+<context-pararm>
+    <param-name></param-name>
+    <param-value></param-value>
+</context-pararm>
+
+servlet配置
+<servlet>
+    <servlet-name></servlet-name>
+    <servlet-class></servlet-class>
+</servlet>
+<servlet-mapping>
+    <servlet-name></servlet-name>
+    <url-pattern></url-pattern>
+</servlet-mapping>
+
+过滤器
+<filter>
+    <filter-name></filter-name>
+    <filter-class></filter-class>
+</filter>
+<filter-mapping>
+    <filter-name></filter-name>
+    <url-pattern></url-pattern>
+</filter-mapping>
+
+session
+<session-config>
+    <session-timeout></session-timeout>
+</session-config>
+
+监听器
+<listener>
+    <listener-class></listener-class>
+</listener>
+```
+
+内容构成：
+
+- context-param配置:   可以通过this.getServletContext().getInitialParameters(""); web容器级别
+
+- filter
+
+  配置过滤器等
+
+- servlet
+
+  定义和mapping，内部也可以context-param
+
+- session-config
+
+  配置session超时等信息
+
+- 拦截器（springMVC
+
+- 
+
+
+
+# IDEA创建基础WEB程序
 
 1、IDEA创建工程，选择maven->create from archetype ->maven-archetype-webapp
 
@@ -10,13 +81,13 @@
 
 3、增加pom依赖: servlet-api
 
-    ```xml
+```xml
 <dependency>
   <groupId>javax.servlet</groupId>
   <artifactId>servlet-api</artifactId>
   <version>2.5</version>
 </dependency>
-    ```
+```
 
 4、自定义servlet
 
@@ -100,23 +171,35 @@ global2
 
 ![image-20210415234816400](0-Web基础知识.assets/image-20210415234816400.png)
 
-## web.xml说明
 
-内容构成：
 
-​	context-param配置:   this.getServletContext().getInitialParameters(""); web容器级别
+# Servlet
 
-   filter
+## 类继承关系
 
-   servlet定义和mapping，内部也可以context-param
 
-  session-config：
+
+## 常用方法
+
+getInitParameter：初始化参数
+
+getServletConfig()： Servlet配置
+
+getServletContext： Servlet上下文
+
+
 
 ## ServletContext
 
 整个web容器全局唯一
 
-this.servlet
+context.setAttribute()
+
+context.getAttribute()
+
+context.getRequestDispatcher("/gp").forward(req, resp)
+
+
 
 
 
@@ -124,13 +207,108 @@ this.servlet
 
 ## 监听器Listener
 
+实现监听器接口，各种不同的监听器接口
+
+![image-20210425154448303](0-Web基础知识.assets/image-20210425154448303.png)
+
+样例：web.xml配置
+
+![image-20210425155027615](0-Web基础知识.assets/image-20210425155027615.png)
+
+实现类：session的数量统计
+
+![image-20210425155322288](0-Web基础知识.assets/image-20210425155322288.png)
+
+使用jsp打印
+
+![image-20210425155404950](0-Web基础知识.assets/image-20210425155404950.png)
+
+
+
 ## 过滤器Filter
 
-​	如增加消息头，不 符合鉴权直接返回403
+### 处理乱码
+
+  ```java
+class CharacterEncodingFilter implements Filter {
+    
+}
+  ```
+
+response.setCharacterEncoding("utf-8");
+
+response.setContentType("text/html;charset=UTF-8");
+
+![image-20210425154246976](0-Web基础知识.assets/image-20210425154246976.png)
+
+### 鉴权拦截
+
+1、正常业务逻辑，登录后设置session属性
+
+  登录servlet定义
+
+![image-20210425164135274](0-Web基础知识.assets/image-20210425164135274.png)
+
+  登出Servlet定义：
+
+![image-20210425164056036](0-Web基础知识.assets/image-20210425164056036.png)
+
+2、web.xml增加过滤器配置
+
+![image-20210425164003890](0-Web基础知识.assets/image-20210425164003890.png)
+
+3、实现过滤器
+
+![image-20210425163852863](0-Web基础知识.assets/image-20210425163852863.png)
+
+## Cookie
+
+Cookie有大小限制，数组形式
+
+Cookies[] cookies = req.getCookies();
+
+// 响应增加cookie
+
+Cookie cookie = new Cookie("xx", "xx");
+
+resp.addCookie(cookie);
+
+// cookie有效期
+
+cookie.setMaxAget(24 * 60 * 60);
+
+## Session
+
+JSESESSIONID
+
+
+```xml
+<session-config>
+    <session-timeout></session-timeout>
+</session-config>
+```
+
+
+## 加载Resource下文件
+
+方法1：
+
+Properties props = new Properties();
+props.load(JdbcUtils.class.getClassLoader().getResourceAsStream("db.properties"));
+
+方法2：
+
+InputStream is = this.getServletContext().getResourceAsStream("/WEB-INFO/classes/db.properties");
+
+Properties pros = new Properties();
+
+props.load(is);
 
 
 
-## Cookie&Session
+## Response
+
+### 下载文件
 
 
 
@@ -138,11 +316,7 @@ this.servlet
 
 
 
-
-
-
-
-IDEA基础调试
+### 重定向
 
 
 
