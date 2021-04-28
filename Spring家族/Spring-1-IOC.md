@@ -443,7 +443,6 @@ example shows this approach:
 
 #### 2.9.1 生命周期callback(PostConstruct和init-method)
 
-Spring Bean生命周期的各阶段介绍:https://www.cnblogs.com/-beyond/p/13188675.html
 
 ##### 1. Initialization Callbacks
 
@@ -725,6 +724,9 @@ public interface BeanNameAware extends Aware {
 ```
 
 #### 2.9.4 **Other** Aware **Interfaces**
+
+不同xxxAware + BeanPostProcessor + InitializingBean + DisposableBean + init-method + destroy-method的实现效果对比: https://www.cnblogs.com/-beyond/p/13188675.html
+
 
 ![image-20210216171653965](Spring.assets/image-20210216171653965.png)
 
