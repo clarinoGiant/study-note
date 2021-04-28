@@ -443,6 +443,8 @@ example shows this approach:
 
 #### 2.9.1 生命周期callback(PostConstruct和init-method)
 
+Spring Bean生命周期的各阶段介绍:https://www.cnblogs.com/-beyond/p/13188675.html
+
 ##### 1. Initialization Callbacks
 
 > 支持3种方式，推荐注解和init-method方案
