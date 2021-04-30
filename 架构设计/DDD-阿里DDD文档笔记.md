@@ -1,10 +1,10 @@
-# 参考：阿里专家详解DDD
+# 参考
 
 阿里技术专家详解DDD系列 https://zhuanlan.zhihu.com/p/366395817
 
 
 
-## 第二讲 - 应用架构（改造DDD)
+# 第2讲 - 应用架构（改造DDD)
 
 介绍了一个具体例子从基于传统模式（controller->service(复杂实现逻辑) ，即Matin Follower提到的事务脚本模式）到基于DDD改造一步步过程
 
@@ -73,12 +73,12 @@ public class AccountRepositoryImpl implements AccountRepository {
     // ...
 ```
 
-### DAO 和 Repository 类的对比：
+### DAO vs Repository
 
 - DAO对应的是一个特定的数据库类型的操作，相当于SQL的封装。所有操作的对象都是DO类，所有接口都可以根据数据库实现的不同而改变。比如，insert 和 update 属于数据库专属的操作。
 - Repository对应的是Entity对象读取储存的抽象，在接口层面做统一，不关注底层实现。比如，通过 save 保存一个Entity对象，但至于具体是 insert 还是 update 并不关心。Repository的具体实现类通过调用DAO来实现各种操作，通过Builder/Factory对象实现AccountDO 到 Account之间的转化
 
-###  Repository和Entity对比
+###  Repository vs Entity
 
 - 通过Account对象，避免了其他业务逻辑代码和数据库的直接耦合，避免了当数据库字段变化时，大量业务逻辑也跟着变的问题。
 - 通过Repository，改变业务代码的思维方式，让业务逻辑不再面向数据库编程，而是面向领域模型编程。
@@ -86,11 +86,13 @@ public class AccountRepositoryImpl implements AccountRepository {
 - Repository作为一个接口类，可以比较容易的实现Mock或Stub，可以很容易测试。
 - AccountRepositoryImpl实现类，由于其职责被单一出来，只需要关注Account到AccountDO的映射关系和Repository方法到DAO方法之间的映射关系，相对于来说更容易测试。
 
-## 第三讲 - Repository模式
+# 第3讲 - Repository模式
 
 贫血模型的不足之处；
 
-### Entity、DTO和DO关系
+### Entity、DTO和DO概念
+
+
 
 ![img](https://pic3.zhimg.com/80/v2-d3e0376c641aa219bea807027d062a4a_1440w.jpg)
 
@@ -112,7 +114,7 @@ public class AccountRepositoryImpl implements AccountRepository {
 
 ![img](https://pic1.zhimg.com/80/v2-c4f98d2cfcdcab006f0f59c5c2f01920_1440w.jpg)
 
-### Entity、DO和DTO所在模块和转换
+### Entity、DO和DTO转换
 
 由于现在从一个对象变为3+个对象，对象间需要通过转化器（Converter/Mapper）来互相转化。而这三种对象在代码中所在的位置也不一样，简单总结如下：
 
@@ -177,7 +179,7 @@ public interface DtoAssembler { // 注意这里变成了一个接口，MapStruct
 }
 ```
 
-#### Repository代码规范（未完）
+### Repository规范
 
 1. **接口名称不应该使用底层实现的语法：**我们常见的insert、select、update、delete都属于SQL语法，使用这几个词相当于和DB底层实现做了绑定。相反，我们应该把 Repository 当成一个中性的类 似Collection 的接口，使用语法如 find、save、remove。在这里特别需要指出的是区分 insert/add 和 update 本身也是一种和底层强绑定的逻辑，一些储存如缓存实际上不存在insert和update的差异，在这个 case 里，使用中性的 save 接口，然后在具体实现上根据情况调用 DAO 的 insert 或 update 接口。
 2. **出参入参不应该使用底层数据格式：**需要记得的是 Repository 操作的是 Entity 对象（实际上应该是Aggregate Root），而不应该直接操作底层的 DO 。更近一步，Repository 接口实际上应该存在于Domain层，根本看不到 DO 的实现。这个也是为了避免底层实现逻辑渗透到业务代码中的强保障。
@@ -262,9 +264,11 @@ public class Account {
 
 ## CQRS
 
-命令与查询分责
+命令与查询分离
 
-Command Query：
+Command: 创建、配置和修改
+
+Query：
 
 
 
