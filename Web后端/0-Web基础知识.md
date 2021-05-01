@@ -4,7 +4,9 @@
 
 
 
-# web.xml构成
+# 预备知识
+
+## 1. web.xml构成
 
 典型样例：
 
@@ -71,7 +73,127 @@ session
 
 
 
-# IDEA创建基础WEB程序
+
+
+# 2. Servlet
+
+## 类继承关系
+
+
+
+## 常用方法
+
+getInitParameter：初始化参数
+
+getServletConfig()： Servlet配置
+
+getServletContext： Servlet上下文
+
+
+
+## ServletContext
+
+整个web容器全局唯一
+
+context.setAttribute()
+
+context.getAttribute()
+
+context.getRequestDispatcher("/gp").forward(req, resp)
+
+
+
+
+
+## 拦截器Interpreter
+
+## 监听器Listener
+
+实现监听器接口，各种不同的监听器接口
+
+![image-20210425154448303](0-Web基础知识.assets/image-20210425154448303.png)
+
+样例：web.xml配置
+
+![image-20210425155027615](0-Web基础知识.assets/image-20210425155027615.png)
+
+实现类：session的数量统计
+
+![image-20210425155322288](0-Web基础知识.assets/image-20210425155322288.png)
+
+使用jsp打印
+
+![image-20210425155404950](0-Web基础知识.assets/image-20210425155404950.png)
+
+
+
+## 过滤器Filter
+
+### 解决乱码
+
+  ```java
+class CharacterEncodingFilter implements Filter {
+    
+}
+  ```
+
+response.setCharacterEncoding("utf-8");
+
+response.setContentType("text/html;charset=UTF-8");
+
+![image-20210425154246976](0-Web基础知识.assets/image-20210425154246976.png)
+
+### 鉴权拦截
+
+1、正常业务逻辑，登录后设置session属性
+
+  登录servlet定义
+
+![image-20210425164135274](0-Web基础知识.assets/image-20210425164135274.png)
+
+  登出Servlet定义：
+
+![image-20210425164056036](0-Web基础知识.assets/image-20210425164056036.png)
+
+2、web.xml增加过滤器配置
+
+![image-20210425164003890](0-Web基础知识.assets/image-20210425164003890.png)
+
+3、实现过滤器
+
+![image-20210425163852863](0-Web基础知识.assets/image-20210425163852863.png)
+
+## Cookie
+
+Cookie有大小限制，数组形式
+
+```java
+Cookies[] cookies = req.getCookies();
+
+// 响应增加cookie
+Cookie cookie = new Cookie("xx", "xx");
+resp.addCookie(cookie);
+
+// cookie有效期
+cookie.setMaxAget(24 * 60 * 60);
+```
+
+## Session
+
+​	Header: JSESESSIONID
+
+
+```xml
+<session-config>
+    <session-timeout></session-timeout>
+</session-config>
+```
+
+
+
+
+
+# 3. 创建WEB项目
 
 1、IDEA创建工程，选择maven->create from archetype ->maven-archetype-webapp
 
@@ -173,150 +295,33 @@ global2
 
 
 
-# Servlet
-
-## 类继承关系
 
 
-
-## 常用方法
-
-getInitParameter：初始化参数
-
-getServletConfig()： Servlet配置
-
-getServletContext： Servlet上下文
-
-
-
-## ServletContext
-
-整个web容器全局唯一
-
-context.setAttribute()
-
-context.getAttribute()
-
-context.getRequestDispatcher("/gp").forward(req, resp)
-
-
-
-
-
-## 拦截器Interpreter
-
-## 监听器Listener
-
-实现监听器接口，各种不同的监听器接口
-
-![image-20210425154448303](0-Web基础知识.assets/image-20210425154448303.png)
-
-样例：web.xml配置
-
-![image-20210425155027615](0-Web基础知识.assets/image-20210425155027615.png)
-
-实现类：session的数量统计
-
-![image-20210425155322288](0-Web基础知识.assets/image-20210425155322288.png)
-
-使用jsp打印
-
-![image-20210425155404950](0-Web基础知识.assets/image-20210425155404950.png)
-
-
-
-## 过滤器Filter
-
-### 处理乱码
-
-  ```java
-class CharacterEncodingFilter implements Filter {
-    
-}
-  ```
-
-response.setCharacterEncoding("utf-8");
-
-response.setContentType("text/html;charset=UTF-8");
-
-![image-20210425154246976](0-Web基础知识.assets/image-20210425154246976.png)
-
-### 鉴权拦截
-
-1、正常业务逻辑，登录后设置session属性
-
-  登录servlet定义
-
-![image-20210425164135274](0-Web基础知识.assets/image-20210425164135274.png)
-
-  登出Servlet定义：
-
-![image-20210425164056036](0-Web基础知识.assets/image-20210425164056036.png)
-
-2、web.xml增加过滤器配置
-
-![image-20210425164003890](0-Web基础知识.assets/image-20210425164003890.png)
-
-3、实现过滤器
-
-![image-20210425163852863](0-Web基础知识.assets/image-20210425163852863.png)
-
-## Cookie
-
-Cookie有大小限制，数组形式
-
-Cookies[] cookies = req.getCookies();
-
-// 响应增加cookie
-
-Cookie cookie = new Cookie("xx", "xx");
-
-resp.addCookie(cookie);
-
-// cookie有效期
-
-cookie.setMaxAget(24 * 60 * 60);
-
-## Session
-
-JSESESSIONID
-
-
-```xml
-<session-config>
-    <session-timeout></session-timeout>
-</session-config>
-```
-
+# 4. 专题
 
 ## 加载Resource下文件
 
-方法1：
-
+```java
+// 方法1：
 Properties props = new Properties();
 props.load(JdbcUtils.class.getClassLoader().getResourceAsStream("db.properties"));
 
-方法2：
-
+// 方法2：
 InputStream is = this.getServletContext().getResourceAsStream("/WEB-INFO/classes/db.properties");
-
 Properties pros = new Properties();
 
 props.load(is);
-
-
-
-## Response
-
-### 下载文件
+```
 
 
 
 
 
+## 文件上传
 
 
-### 重定向
+
+## 文件下载
 
 
 
