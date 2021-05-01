@@ -14,7 +14,7 @@ Spring实战第4版
 
 
 
-# 1. 简介
+# 一、简介
 
 maven依赖配置：依赖context/core/aop等多个模块，自己开发时可只指定该模块
 
@@ -27,13 +27,13 @@ maven依赖配置：依赖context/core/aop等多个模块，自己开发时可�
 </dependency>
 ```
 
-# 2. IOC
+# 二、 IOC
 
 官方：https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#spring-core
 
-## 2.1 容器概览
+## 1 容器概览
 
-### 2.1.1 元数据配置方式
+### 1.1 元数据配置方式
 
 1. beans.xml：传统方式
 
@@ -57,7 +57,7 @@ maven依赖配置：依赖context/core/aop等多个模块，自己开发时可�
 </beans>
 ```
 
-### 2.1.2 实例化容器
+### 1.2 实例化容器
 
 The location path or paths supplied to an ApplicationContext constructor are resource strings that let the container load configuration metadata from a variety of external resources, such as the local file system, the Java CLASSPATH, and so on.
 
@@ -84,15 +84,15 @@ List<String> userList = service.getUsernameList();
 
 ```
 
-## 2.2 Bean 概览
+## 2 Bean 概览
 
-### 2.2.1 命名Bean
+### 2.1 命名Bean
 
 ​	基于XML配置的meta中，可以使用id或name指定一个bean。
 
 ​	**Bean Naming Conventions**：start with a lowercase letter and are camel-cased from there.
 
-### 2.2.2 实例化Bean
+### 2.2 实例化Bean
 
 #### 1. 使用构造器实例化
 
@@ -723,7 +723,7 @@ public interface BeanNameAware extends Aware {
 }
 ```
 
-#### 2.9.4 **Other** Aware **Interfaces**
+#### 2.9.4 其他Aware **Interfaces**
 
 不同xxxAware + BeanPostProcessor + InitializingBean + DisposableBean + init-method + destroy-method的实现效果对比: https://www.cnblogs.com/-beyond/p/13188675.html
 

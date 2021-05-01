@@ -77,7 +77,6 @@ https://potoyang.gitbook.io/spring-in-action-v4
 **不同织入方案的对比：**
 
 - @Aspect注解（编译时织入）：来源于Eclipse Aspect Project，基于接口
-
 - 基于Spring AOP（JDK代理或cglib运行时织入）：基于类
 
 # 二. 通过切点来选择连接点
@@ -244,7 +243,7 @@ public class ConcertConfig {
 
 我们需要记住的是，Spring 的 AspectJ 自动代理仅仅使用 @AspectJ 作为创建切面的指导，切面依然是基于代理的。在本质上，它依然是 Spring 基于代理的切面。
 
-## 2.创建@Around Advice
+## 2. 创建@Around Advice
 
 环绕通知是最为强大的通知类型。**它能够让你所编写的逻辑将被通知的目标方法完全包装起来**。实际上就像在一个通知方法中同时编写前置通知和后置通知。为了阐述环绕通知，我们重写 Audience 切面。这次，我们使用一个 环绕通知来代替之前多个不同的前置通知和后置通知。
 
@@ -584,5 +583,69 @@ XML配置：
 
 
 
+# 五、典型使用
 
+## 1. 封装异常处理
+
+阿里技术专家详解DDD系列 第五讲：聊聊如何避免写流水账代码 https://zhuanlan.zhihu.com/p/366395817
+
+修改前
+
+```java
+@PostMapping("checkout")
+public Result<OrderDTO> checkout(Long itemId, Integer quantity) {
+    try {
+        CheckoutCommand cmd = new CheckoutCommand();
+        OrderDTO orderDTO = checkoutService.checkout(cmd);    
+        return Result.success(orderDTO);
+    } catch (ConstraintViolationException cve) {
+        // 捕捉一些特殊异常，比如Validation异常
+        return Result.fail(cve.getMessage());
+    } catch (Exception e) {
+        // 兜底异常捕获
+        return Result.fail(e.getMessage());
+    }
+}
+```
+
+定义切面
+
+```java
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ResultHandler {
+
+}
+
+@Aspect
+@Component
+public class ResultAspect {
+    @Around("@annotation(ResultHandler)")
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        Object proceed = null;
+        try {
+            proceed = joinPoint.proceed();
+        } catch (ConstraintViolationException cve) {
+            return Result.fail(cve.getMessage());
+        } catch (Exception e) {
+            return Result.fail(e.getMessage());
+        }
+        return proceed;
+    }
+}
+```
+
+使用切面改造后
+
+```java
+@PostMapping("checkout")
+@ResultHandler
+public Result<OrderDTO> checkout(Long itemId, Integer quantity) {
+    CheckoutCommand cmd = new CheckoutCommand();
+    OrderDTO orderDTO = checkoutService.checkout(cmd);
+    return Result.success(orderDTO);
+}
+```
+
+# 六、其他
 
