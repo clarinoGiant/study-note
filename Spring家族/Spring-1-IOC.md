@@ -1,5 +1,3 @@
-[TOC]
-
 
 
 ### 参考 
@@ -278,14 +276,14 @@ bean.xml的配置
     <bean id="beanTwo" class="x.y.ThingTwo"/>
     <bean id="beanThree" class="x.y.ThingThree"/>
 
-    <!-- traditional declaration with optional argument names -->
+    <!-- 传统：declaration with optional argument names -->
     <bean id="beanOne" class="x.y.ThingOne">
         <constructor-arg name="thingTwo" ref="beanTwo"/>
         <constructor-arg name="thingThree" ref="beanThree"/>
         <constructor-arg name="email" value="something@somewhere.com"/>
     </bean>
 
-    <!-- c-namespace declaration with argument names -->
+    <!-- 对比：c-namespace declaration with argument names -->
     <bean id="beanOne" class="x.y.ThingOne" 
           c:thingTwo-ref="beanTwo"
           c:thingThree-ref="beanThree" 
@@ -861,3 +859,144 @@ After Bean 'familyService' created : com.test.service.FamilyService@797badd3
 #### 3. FactoryBean
 
 ## 
+
+
+
+
+
+# 三、高级篇
+
+## 1. 引入外部属性文件（明文）
+
+> 仅介绍配置为明文的引入，如果涉及到加密的属性，参考下一章节
+
+应用场景：DB的相关配置，如用户名和密码。
+
+database.properties
+
+``` properties
+jdbc.driverClassName=com.mysql.jdbc.Driver
+jdbc.url=jdbc:mysql://localhost:3306/sys
+jdbc.username=root
+jdbc.password=123456
+```
+
+- 方法1：PropertyPlaceholderConfigure引入
+
+  ```xml
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+      <property name="location" value="database.properties">
+      <property name="fileEncoding" value="utf-8">
+  </bean>
+  
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+      <property name="driverClassName" value="${jdbc.driverClassName}" />
+      <property name="url" value="${jdbc.url}" />
+      <property name="username" value="${jdbc.username}" />
+      <property name="password" value="${jdbc.password}" />
+  </bean>
+  ```
+
+  其他属性：
+
+  1. locations：指定多个属性文件，类似配置List方式
+  2. fileEncoding: 文件编码方式，Spring使用操作系统默认编码读取属性，如属性采用特殊编码，需显示配置
+  3. order：如果定义了多个PropertyPlaceholderConfigurer，通过该参数指定优先顺序
+
+- **方法2：<context:property-plceholder 引入（常用，优雅）**
+
+        ```xml
+  <context:property-placeholder order="0" location="database.properties" />
+  <context:property-placeholder order="1" location="encoding.properties" />
+        ```
+
+## 2. 引入外部属性文件（密文）
+
+> 对于敏感的属性，如数据库密码等敏感信息，应以密文方式保存。此时读取时应支持绑定业务的解密逻辑。
+
+流程：
+
+- 使用业务加密方法对数据加密，放到配置文件
+- 使用继承自PropertyPlaceHolderConfigurer类，对读取的参数定制读取逻辑(是否需解密)
+
+**PropertyPlaceHolderConfigurer**用于在属性使用之前对属性转换的方法
+
+- void convertProperties(Properties props)
+
+  属性文件中所有属性值都封装在props中，覆盖此方法，可对所有属性值进行转换处理
+
+- String convertProperty(String propertyName, String propertyValue):
+
+  在加载属性文件并读取文件中每个属性时，都会调用此方法进行转换处理
+
+- String convertPropertyValue(String originalValue):
+
+  和上方法类似，但没有传入属性名
+
+**使用样例：**
+
+1. 加密后的配置文件（假设使用DES加密）
+
+   ``` properties
+   driverClassName=com.mysql.jdbc.Driver
+   url=jdbc:mysql://localhost:3306/sys
+   userName=root
+   password=1qahvoiuc!@d
+   ```
+
+2. 自定义类继承PropertyPlaceHolderConfigurer
+
+   ```java
+   import org.springframework.beans.factory.config.PropertyPlaceHolderConfigurer;
+   
+   public class EncryptPropertyPlaceHolderConfigurer extends PropertyPlaceHolderConfigurer {
+       private String[] encryptPropNames = { "userName", "password" };
+       
+       // 对特性属性的属性值进行转换
+       @Override
+       protected String convertProperty(String propertyName, String propertyValue){
+           if (isEncryptProp(propertyName)) {
+               String decryptValue = DESUtils.getDecryptString(propertyValue);
+               return decryptValue;
+           } else {
+               return decryptValue;
+           }
+       }
+       
+       // 判断是否需要解密的属性
+       private Boolean isEncryptProp(String propertyName) {
+           for (String encryptPropName : encryptPropNames) {
+               if (encryptPropName.equals(propertyName)){
+                   return true;
+               }
+           }
+       }
+   }
+   ```
+
+3. 配置bean.xml文件
+
+   ```xml
+   <bean class="org.smart.palceholder.EncryptPropertyPlaceHolderConfigurer"
+   	p:location="classpath:com/smart/placeholder/jdbc.properties"
+   	p:fileEncoding="utf-8">
+   
+   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+       p:driverClassName="${driverClassName}"
+       p:url="${url}"
+       p:username="${username}"
+   	p:password="${password}" />
+   ```
+
+## 3. 属性文件自身的引用
+
+​	Spring既允许Bean定义中通过${propName}引用属性值，也允许属性文件中使用${propName}实现属性之间的引用
+
+   属性值太长时，可使用行后添加 \ 划分成多行
+
+```properties
+dbName=sampledb
+driverClassName=com.mysql.jdbc.Driver
+url=jdbc:mysql://localhost:3306/${dbName}
+```
+

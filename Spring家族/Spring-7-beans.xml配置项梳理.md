@@ -52,6 +52,7 @@
 		<property name="sessionFactory" ref="sessionFactory" />
 	</bean>
 
+    <!--  如下tx:advice+aop是spring事务相关配置（使用AOP技术）,对指定包路径下不同方法配置不同事务级别 -->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
 			<tx:method name="*" propagation="REQUIRED" read-only="true"/>
@@ -85,7 +86,11 @@
 
 ## 2. property-placeholder
 
+​	指定依赖的外部配置文件
+
 ​	<context:property-placeholder location="classpath:jdbc.properties"/>
+
+
 
 # 四、<bean
 
