@@ -374,7 +374,7 @@ https://www.cnblogs.com/loong-hon/p/10917755.html
     	}
     }
 beans.xml配置
-  ```
+  ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -553,9 +553,6 @@ call print(), name = AAAA
 ```
 
 
-
-
-
 ##### 3. Destruction Callbacks
 
 > 支持3种方式，推荐注解和init-method方案
@@ -710,7 +707,6 @@ com.test.service.AddressService@2890c451
 com.test.service.AddressService@40e6dfe1
 com.test.service.AddressService@1b083826
 ```
-
 
 
 #### 2.9.3 BeanNameAware
@@ -910,7 +906,7 @@ jdbc.password=123456
   <context:property-placeholder order="1" location="encoding.properties" />
         ```
 
-## 2. 引入外部属性文件（密文）
+## 2. 引入外部属性文件（加密项）
 
 > 对于敏感的属性，如数据库密码等敏感信息，应以密文方式保存。此时读取时应支持绑定业务的解密逻辑。
 
@@ -942,8 +938,7 @@ jdbc.password=123456
    url=jdbc:mysql://localhost:3306/sys
    userName=root
    password=1qahvoiuc!@d
-   ```
-
+   ```   
 2. 自定义类继承PropertyPlaceHolderConfigurer
 
    ```java
@@ -976,17 +971,17 @@ jdbc.password=123456
 
 3. 配置bean.xml文件
 
-   ```xml
-   <bean class="org.smart.palceholder.EncryptPropertyPlaceHolderConfigurer"
-   	p:location="classpath:com/smart/placeholder/jdbc.properties"
+```xml
+<bean class="org.smart.palceholder.EncryptPropertyPlaceHolderConfigurer"
+	p:location="classpath:com/smart/placeholder/jdbc.properties"
    	p:fileEncoding="utf-8">
    
-   <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
-       p:driverClassName="${driverClassName}"
-       p:url="${url}"
-       p:username="${username}"
-   	p:password="${password}" />
-   ```
+<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+    p:driverClassName="${driverClassName}"
+    p:url="${url}"
+    p:username="${username}"
+    p:password="${password}" />
+```
 
 ## 3. 属性文件自身的引用
 
@@ -999,4 +994,151 @@ dbName=sampledb
 driverClassName=com.mysql.jdbc.Driver
 url=jdbc:mysql://localhost:3306/${dbName}
 ```
+
+## 4. 国际化
+
+### 	**1. java.util.Locale**  
+
+代表语言和国家地区的本地化类，国际化的基础
+
+```java
+Locale locale1 = new Local("zh", "CN");
+
+Locale locale2 = new Locale("zh");
+// 效果同locale1
+Locale locale3 = Locale.CHINA;
+// 效果同locale2
+Locale locale4 = Locale.CHINESE;
+// 获取本地系统默认的本地化对象
+Locale locale5 = Locale.getDefault();
+```
+
+### 2. java.util.xxFormat
+
+- NumberFormat
+
+  ```java
+  Locale local = new Locale("zh", "CN");
+  NumberFormat currFmt = NumberFormat.getCurrencyInstance(locale);
+  double amt = 123456.78;
+  System.out.prinltn(currFmt.format(amt));
+  执行结果：￥123,456.78
+  ```
+  
+
+- DateFormat
+
+  ```java
+  Locale local = new Local("en", "US");
+  Date date = new Date();
+  DateFormat df = DateFormat.getDataInstance(DateFormat.MEDIUM, locale);
+  System.out.println(df.format(date));
+  执行结果：Jan 8,2007
+  ```
+
+### **3. ResourceBoundle**
+
+​     国际化资源文件命名： 资源名 _ 语言代码 _ 国家地区代码.properties
+
+​     resource_zh_CN.properties 、resource_en_US.properties
+
+​    资源文件要求必须只能包含ASCII字符。
+
+​	resource_en_US.properties
+
+```properties
+greeting.common=How are you!
+```
+
+​    resource_zh_CN.properties
+
+```properties
+greeting.common=\u60a8\u597d\uff01
+```
+
+  转换命令：通常将中文字符配置资源文件，并使用native2ascii命令全文转换
+
+```shell
+native2ascii -encoding utf-8 d:\resource_zh_CN.properties  d:\resource_zh_CN1.properteis
+```
+
+ IDEA的工具：File->Setting->Editor->File Encoding
+
+![image-20210503123457947](Spring-1-IOC.assets/image-20210503123457947.png)
+
+ 配置后，虽然内容是ASCII，但IDE可显示转换前中文
+
+![image-20210503123728441](Spring-1-IOC.assets/image-20210503123728441.png)
+
+**javal.util.ResouceBundle读取资源文件**
+
+代码示例
+
+```java
+ResourceBundle rd1 = ResourceBundle.getBundle("com/smart/i18n/resource", Locale.US);
+ResourceBundle rd2 = ResourceBundle.getBundle("com/smart/i18n/resource", Locale.CHINA);
+
+System.out.println(rb1.getString("greeting.common"));  // 打印 How are you
+System.out.println(rb2.getString("greeting.common"));  // 打印 您好
+```
+
+**缺点：不支持带占位符参数场景，需使用MessageFormat解决**
+
+### 4. MessageFormat
+
+  场景：占位符场景
+
+ ```properties
+// 英文： 
+greeting.common=How are you {0}, today is {1};
+// 中文
+greeting.common=\u60a8\u597d\uff01 {0}, \u4eca\u5929\u662f {1};
+ ```
+使用样例
+
+```java
+ResourceBundle rb1 = ResourceBundle.getBundle("com/smart/i18n/fmt_resource", Locale.US);
+ResourceBundle rb2 = ResourceBundle.getBundle("com/smart/i18n/fmt_resource", Locale.CHINA);
+Object[] params = {"John", new GregorianCalenadar().getTime()};
+
+String str1 = new MessageFormat(rb1.getString("greeting.common"), Locale.US).format(params);
+System.out.println(str1);  // How are you!John, today is 1/9/07 4:11 PM
+String str2 = new MessageFormat(rb1.getString("greeting.common"), Locale.CHINA).format(params);
+System.out.println(str2);  // 你好!John, 现在是下午4:11
+```
+
+### 5. MessageSource
+
+样例1：
+
+```xml
+<bean id="myResource"
+      class="org.springframework.context.support.ResouceBundleMessageSource" >
+    <proprety name="basename" >
+        <list>
+            <value>com/smart/i18n/fm_resource</value>
+        </list>
+    </proprety>
+</bean>
+```
+
+启动Spring代码
+
+```java
+String[] configs = {"com/smart/i18n/beans.xml"};
+ApplicationContext ctx = new ClassPathXmlApplicationContext(configs);
+
+MessageSource ms = (MessageSource)ctx.getBean("myResource");
+Object[] params = {"John", new GregorianCalendar(),getTime()};
+
+String str1 = ms.getMessage("greeting.common", params, Local.US);
+String str2 = ms.getMessage("greeting.common", params, Local.CHINA);
+```
+
+说明：与MessageFormat的使用差别
+
+1. 不需加载不同国家的本地资源文件，通过资源名就可加载整套国际化信息资源文件；
+2. 不需显示使用MessageFormat操作国际化信息，仅通过MessageSource.getMessage() 就可完成操作。
+
+**扩展：ReloadableResouceBundleMessage支持定时刷新读取配置文件。**
 
