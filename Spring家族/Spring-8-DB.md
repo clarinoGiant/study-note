@@ -257,13 +257,21 @@ spring配置文件
 
 ### 1.1 更改数据update
 
-update方法：允许对数据表记录进行更改和删除。
+update方法：允许对数据表记录进行插入、更新和删除。
 
 - int update(String sql): 不带占位符
 - int update(String sql, Object... args): 不定参数场景
 - int update(String sql, PreparedStatementSetter pss): 第2个参数是回调接口。
 - int update(PreparedStatementCreator psc): 参数是回调接口，负责创建一个PreparedStatement实例。
 - int upate(PreparedStatementCreator ps, PreparedStatementSetter pss)
+
+**Parameter values are usually provided as variable arguments or, alternatively, as an object array。**
+
+```java
+this.jdbcTemplate.update(
+  "update t_actor set last_name = ? where id = ?",
+  "Banjo", 5276L);
+```
 
 使用样例：
 
@@ -320,3 +328,80 @@ public void addForum(Forum forum) {
 
 
 # 三、事务
+
+## 1. 基础知识
+
+### 1.1 事务的特征
+
+​     A(原子）、C（一致）、I（隔离性）、D（永久性）。
+
+​	隔离：并发数据操作时，不同事务有各自的数据空间，各自操作不会对对方产生干扰。
+
+​	数据库系统采用**数据库锁**机制保证事务的隔离性。
+
+### 1.2 数据并发的问题
+
+​	并发访问相同数据的时候，如未采取必要的隔离措施，导致的并发问题：3类数据读和2类数据更新问题
+
+- **脏读**：A事务读取B事务尚未提交的更改数据并在此数据基础上操作。如果B事务回滚，则A事务读到的数据是不被承认的。
+
+- **不可重复读**：A事务读取了B事务已提交的更改数据。但是因为读取时机的问题，导致读取的数据不一致。
+
+  同一事务中，对于同一数据，执行完全相同的select语句时可能看到不一样的结果。**通过增加行锁方式解决。**
+
+  ![image-20210505184113489](Spring-8-DB.assets/image-20210505184113489.png)
+
+- **幻象读**：A事务读取B事务新提交的新增数据，当用户读取某一范围的数据行时，另一个事务又在该范围内插入了新行，当用户再读取该范围的数据行时，会发现有新的“幻影” 行；
+
+  ​    **通过多版本并发控制(MVCC，Multiversion Concurrency Control)机制解决了该问题。**
+
+  ![image-20210505184345718](Spring-8-DB.assets/image-20210505184345718.png)
+
+- 第一类丢失更新：A事务撤销时，把已提交的B事务更新数据覆盖了。
+
+- 第二类丢失更新：A事务覆盖B事务已提交的数据。
+
+### 1.3 数据锁
+
+表锁和行锁。
+
+从并发事务锁定的关系：
+
+- 共享锁：防止独占锁定，但允许其他共享锁定。
+
+- 独占锁：同时防止其他的共享锁定和独占锁定。
+
+具体实现：
+
+- 行共享锁： SELECT FOR UPDATE语句隐式获得行共享锁定；
+
+- 行独占锁定：通过INSERT/UPDATE/DELETE隐式获取或通过LOCK TABLE IN ROW EXCLUSIVE MODE；
+- 表共享锁定：通过LOCK TABLE IN SHARE MODE显示获得；
+- 表共享行独占锁定：通过LOCK TABLE IN SHARE ROW EXCLUSIVE MODE显示获得；
+- 表独占锁定：通过LOCK TABLE IN EXCLUSIVE MODE显示获得。
+
+### 1.4 事务隔离级别
+
+​	数据库为用户提供了自动锁机制：只要用户指定回话的事务隔离级别，数据库就会分析事务中SQL语句，并自动为事务操作的数据资源添加合适的锁。
+
+​	4个等级的事务隔离级别：
+
+![image-20210505185524544](Spring-8-DB.assets/image-20210505185524544.png)
+
+### 1.5 JDBC对事务的支持
+
+​	Connection默认自动提交（每条SQL语句对应一个事务）。为支持多个SQL作为一个事务提交，先
+
+1. Connection#setAutoCommit(false)阻止自动提交；
+
+2. Connection#setTransactionIsolation()设置事务隔离级别；
+
+3. Connection#commit()：提交事务；
+
+4. Connection#rollback()：回滚事务。
+
+   JDBC 2.0中，事务最终只能有2个操作：提交和回滚。
+
+## 2. Spring对事务的支持
+
+Spring提供了事务模板类 TransactionTemplate，并配合使用事务回调
