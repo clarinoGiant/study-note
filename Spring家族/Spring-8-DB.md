@@ -341,7 +341,7 @@ public void addForum(Forum forum) {
 
 ### 1.2 数据并发的问题
 
-​	并发访问相同数据的时候，如未采取必要的隔离措施，导致的并发问题：3类数据读和2类数据更新问题
+​	并发访问相同数据的时候，如未采取必要的隔离措施，导致的并发问题：**3类数据读和2类数据更新问题**
 
 - **脏读**：A事务读取B事务尚未提交的更改数据并在此数据基础上操作。如果B事务回滚，则A事务读到的数据是不被承认的。
 
@@ -382,7 +382,7 @@ public void addForum(Forum forum) {
 
 ### 1.4 事务隔离级别
 
-​	数据库为用户提供了自动锁机制：只要用户指定回话的事务隔离级别，数据库就会分析事务中SQL语句，并自动为事务操作的数据资源添加合适的锁。
+​	数据库为用户提供了自动锁机制：只要用户指定会话的事务隔离级别，数据库就会分析事务中SQL语句，并自动为事务操作的数据资源添加合适的锁。
 
 ​	4个等级的事务隔离级别：
 
@@ -404,4 +404,212 @@ public void addForum(Forum forum) {
 
 ## 2. Spring对事务的支持
 
-Spring提供了事务模板类 TransactionTemplate，并配合使用事务回调
+​	Spring提供了事务模板类 TransactionTemplate，并配合使用事务回调TransactionCallback指定具体的持久化操作，就可以通过编程方式实现事务管理，无需关注资源获取、复用、释放、事务同步和异常处理等操作。
+
+​	Spring支持声明式事务管理：IOC配置指定事务的边界和事务属性。
+
+### 2.1 事务管理关键抽象（接口）
+
+​	Spring事务管理SPI抽象层主要包括3个**接口**（位于org.springframework.transaction）：
+
+- TransactionDefinition：描述事务隔离级别、超时时间、是否只读事务和事务传播规则
+
+- TransactionStatus：事务的具体运行状态，事务管理器可通过该接口获取事务运行期状态，也可以通过该接口间接回滚事务。
+
+- PlatformTransactionManager：根据TransactionDefinition提供的事务配置创建事务，并用TransactionStatus描述激活事务的状态。
+
+  ```java
+  public interface PlatformTransactionManager {
+      // 根据事务定义返回一个已存在的事务或创建一个新事务
+      TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException;
+      // 根据事务的状态提交事务。如果事务状态标识为rollback-only，则方法将执行一个回滚事务操作
+      void commit(TransactionStatus status) throws TransactionException;
+      // 将事务回滚，当commit()异常时，rollback方法会隐式调用
+      void rollback(TransactionStatus status) throws TransactionException;
+  }
+  ```
+
+### 2.2 Spring的事务管理器实现类
+
+​	Spring为不同的持久化框架提供PlatformTransactionManager接口的实现类：
+
+- org.springframework.orm.jpa.JpaTransactionManager
+- org.springframework.jdbc.datasource.DataSourceTransactionManager 使用Spring JDBC或Mybatis等基于DataSource数据源的持久化技术
+
+- org.springframework.orm.hibernateX.HibernateTransactionManager
+
+使用样例
+
+1. 使用Spring  JDBC或Mybatis，都基于Connection访问数据，所以可以使用DataSourceTransactionManager
+
+```java
+<bean id="datasource"
+    class="org.apache.commons.dbcp.BasicDataSource"
+        destroy-method="close"
+        p:driverClassName="${jdbc.driverClassName}"
+        p:url="${jdbc.url}"
+        p:username="${jdbc.userName}"
+        p:password="${jdbc.password}" />
+<bean id="transactionManager"
+        class="org.springframework.jdbc.datasource.DataSourceTransactionManager"
+        p:dataSource-ref="dataSource" />
+```
+
+其他场景不列举
+
+### 2.2 事务同步管理器
+
+​	Spring将Connection等访问数据库的连接或会话统称为资源，且资源不可在同一时刻被多线程共享。Spring事务同步管理器类org.springframework.transaction.support.TransactionSynchronizationManager使用ThreadLocal为不同事务线程提供了独立资源副本。
+
+​	Spring为不同持久化技术提供了从TransactionSynchronizationManager获取对应线程绑定资源的工具类
+
+- org.springframework.jdbc.datasource.DataSourceUtils:  Spring JDBC或Mybatis
+- org.springframework.orm.HibernateX.SessionFactoryUtils: Hibernate X.0
+- org.springframework.orm.jpa.EntityManagerFactoryUtils
+
+上述方法都提供了静态方法，获取和当前线程绑定的资源。如DataSourceUtil.getConnection(DataSource dataSource)
+
+### 2.3 事务传播行为
+
+​	当调用一个基于Spring的Service接口方法时，它将运行在Spring管理的事务环境中，Service接口可能会内部调用其他Service的接口方法以完成一个完整的业务操作，从而产生Service的接口嵌套调用场景。 Spring通过事务传播行为控制当前事务如何传播到被嵌套调用的目标服务接口方法中。
+
+​	Spring在TransactionDefinition中定义了7种类型的事务传播行为
+
+- Propagation.REQUIRED： 如果当前存在事务，则加入该事务，如果当前不存在事务，则创建一个新的事务。
+- Propagation.SUPPORTS：如果当前存在事务，则加入该事务；如果当前不存在事务，则以非事务的方式继续运行。
+- Propagation.MANDATORY：如果当前存在事务，则加入该事务；如果当前不存在事务，则抛出异常。
+- Propagation.REQUIRES_NEW：重新创建一个新的事务，如果当前存在事务，延缓当前的事务。
+- Propagation.NOT_SUPPORTED：以非事务的方式运行，如果当前存在事务，暂停当前的事务。
+- Propagation.NEVER：以非事务的方式运行，如果当前存在事务，则抛出异常。
+- Propagation.NESTED：如果没有，就新建一个事务；如果有，就在当前事务中嵌套其他事务。
+
+## 3. 使用XML配置声明式事务
+
+​	Spring的声明式事务管理是通过Spring AOP实现的。通过声明性信息，Spring负责将事务管理增强逻辑动态织入业务方法的相关连接点中。
+
+​    Service定义：默认使用无事务方式运行。
+
+```java
+package org.smart.service;
+
+@Service
+public class BbtForum {
+    public ForumDao forumDao;
+    public TopicDao topicDao;
+    public PostDao  postDao;
+    
+    public void addTopic(Topic topic) {
+        topicDao.addTopic(topic);
+        postDao.addPost(topic.getPost())
+    }
+    
+    public Forum getForum(int forumId) {
+        return forumDao.getForum(forumId);
+    }
+    
+    public void updateForum(Forum forum) {
+        forumdao.updateForum(form);
+    }
+    
+    public int getForumNum() {
+        return forumDao.getForumNum();
+    }
+}
+```
+
+### 3.1 使用原始的TransactioniProxyFactoryBean
+
+早期方案，推荐后续的tx/aop配置方案
+
+```xml
+<!-- 引入DAO和DataSource的配置文件-->
+<import resource="classpath:applicationContext-dao.xml" />
+
+<bean id="txManager"
+      class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource">
+</bean>
+
+<!-- 需要实施事务增强的目标业务Bean，习惯上需增强的类一般id取名xxTarget -->
+<bean id="bbtForumTarget"
+      class="pacakge com.smart.service.BbtForum"
+      p:forumDao-ref="forumDao"
+      p:topic-ref="topic"
+      p:postDao-ref="postDao" />
+    
+<bean id="bbtForum"
+      class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean"
+      p:transactionManager-ref="txManager"
+      p:targer-ref="bbtForumTarger" >
+    
+    <property name="transactionAttributes" >
+        <props>
+            <prop key="get*">PROPAGATION_REQUIRED,readOnly</props>
+            <prop key="*">PROPAGATION_REQUIRED</prop>
+        </props>
+    </property>
+</bean>
+```
+
+存在的问题：
+
+- 只能通过方法名定义，无法根据入参和访问域修饰符限制
+- 对每个需事务支持的service类单独配置
+
+### 3.2  基于aop/tx命名空间配置
+
+context配置
+
+```xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
+	
+	<!-- 引入属性文件 -->
+	<context:property-placeholder location="db.properties"/>
+	
+	<!-- 创建数据源 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource">
+		<property name="driverClassName" value="${jdbc.driver}"></property>
+		<property name="url" value="${jdbc.url}"></property>
+		<property name="username" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+	</bean>	
+	
+	<!-- 扫描组件 -->
+	<context:component-scan base-package="com.transaction"></context:component-scan>
+	
+	<!-- 配置事务管理器 -->
+	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+		
+	<!-- 配置切入点表达式 -->
+	<aop:config>
+        <!-- 定义事务切面 -->
+		<aop:pointcut id="serviceMethod" expression="execution(* com.smart.service.*Forum.*(..))" />
+		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceMethod" />
+	</aop:config>
+    
+    	<!-- 配置事务通知 -->
+	<tx:advice id="txAdvice" transaction-manager="txManager">
+		<tx:attributes>
+			<tx:method name="get*" read-only="false"/>
+            <tx:method name="add*" rollback-for="Exception"/>
+            <tx:method name="update" />
+		</tx:attributes>
+	</tx:advice>
+```
+
+### 3.3 使用注解配置声明式事务
+
+
+
