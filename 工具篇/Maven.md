@@ -52,3 +52,31 @@ mirrorOf代表了一个镜像的替代位置，例如central就表示代替官�
 ## 打包配置
 
 
+
+
+
+# 常用插件
+
+## 1. maven-surefire-plugin
+
+maven里执行测试用例的插件
+
+```xml
+ <build>
+    <plugins>
+        <plugin>
+		   <groupId>org.apache.maven.plugins</groupId>
+		   <artifactId>maven-surefire-plugin</artifactId>
+		   <version>2.7.2</version>
+		   <configuration>
+		      <forkMode>once</forkMode>
+		      <threadCount>10</threadCount>
+		      <argLine>-Dfile.encoding=UTF-8</argLine>
+		   </configuration>
+		</plugin>
+     </plugins>
+</build>
+```
+
+
+
