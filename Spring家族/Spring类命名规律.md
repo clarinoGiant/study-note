@@ -1,6 +1,6 @@
 # 一、Spring
 
-## xxFactoryBean.java
+## 1. xxFactoryBean.java
 
 部分内容：
 
@@ -14,12 +14,50 @@ public class EhCacheFactoryBean extends CacheConfiguration implements FactoryBea
 
 
 
+## 2. xxBeanPostProcessor
+
+部分查找结果
+
+![image-20210507234353249](Spring类命名规律.assets/image-20210507234353249.png)
+
+
+
+## 3. xxAware
+
+查找结果如下：
+
+其中
+
+- ApplicationContextAware
+- BeanFactoryAware：
+- BeanNameAware：
+
+![image-20210507234538124](Spring类命名规律.assets/image-20210507234538124.png)
+
+## 4. xxAnnotationparser.java
+
+
+
+![image-20210507234722961](Spring类命名规律.assets/image-20210507234722961.png)
+
+## 5. EnableXXX
+
+查找结果：
+
+![image-20210507234822191](Spring类命名规律.assets/image-20210507234822191.png)
+
+
+
+
+
 # 二、SpringBoot
 
 ## 1. xxProperties.java
 
+​	查找application.properties参数的拼写
+
 ![image-20210506235015197](Spring类命名规律.assets/image-20210506235015197.png)
 
-RedisProperties内容
+如RedisProperties内容
 
 ![image-20210506235046022](Spring类命名规律.assets/image-20210506235046022.png)
