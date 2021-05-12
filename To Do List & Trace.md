@@ -6,7 +6,7 @@ Spring AOP： 基础使用、原理、动态代理的几种实现(20210425登记
 
 Spring AOP： 在阿里技术中DDD中针对异常的处理封装
 
-
+孤傲苍狼的Java WEB系列技术博客 https://www.cnblogs.com/xdp-gacl/p/3871730.html   P36讲
 
 # 二、文档与视频进度
 
@@ -44,3 +44,4 @@ Spring AOP： 在阿里技术中DDD中针对异常的处理封装
 
 ​    0509：补充阿里DDD系列文档第1+4+5章节笔记
 
+​	0512：3MS梳理AQS的实现和相关JUC类；学习孤傲苍狼java web博客；梳理WEB获取路径的代码实现；梳理Java web基于servlet实现上传下载

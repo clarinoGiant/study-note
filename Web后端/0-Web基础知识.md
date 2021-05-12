@@ -1,10 +1,10 @@
-# 参考
+# 零、参考
 
 【狂神说Java】JavaWeb入门到实战
 
 
 
-# 预备知识
+# 一、预备知识
 
 ## 1. web.xml构成
 
@@ -20,7 +20,6 @@
     <param-value></param-value>
 </context-pararm>
 
-servlet配置
 <servlet>
     <servlet-name></servlet-name>
     <servlet-class></servlet-class>
@@ -75,11 +74,13 @@ session
 
 
 
-# 2. Servlet
+# 二、Servlet
 
 ## 类继承关系
 
 
+
+## HTTPServlet
 
 ## 常用方法
 
@@ -193,7 +194,7 @@ cookie.setMaxAget(24 * 60 * 60);
 
 
 
-# 3. 创建WEB项目
+# 三、创建WEB项目
 
 1、IDEA创建工程，选择maven->create from archetype ->maven-archetype-webapp
 
@@ -295,16 +296,40 @@ global2
 
 
 
+# 四、JSP（过时技术）
+
+这8个java对象在Jsp页面中是可以直接使用的
+
+```java
+<%
+    session.setAttribute("name", "session对象");//使用session对象,设置session对象的属性
+    out.print(session.getAttribute("name")+"<br/>");//获取session对象的属性
+    pageContext.setAttribute("name", "pageContext对象");//使用pageContext对象,设置pageContext对象的属性
+    out.print(pageContext.getAttribute("name")+"<br/>");//获取pageContext对象的属性
+    application.setAttribute("name", "application对象");//使用application对象,设置application对象的属性
+    out.print(application.getAttribute("name")+"<br/>");//获取application对象的属性
+    out.print("Hello Jsp"+"<br/>");//使用out对象
+    out.print("服务器调用index.jsp页面时翻译成的类的名字是："+page.getClass()+"<br/>");//使用page对象
+    out.print("处理请求的Servlet的名字是："+config.getServletName()+"<br/>");//使用config对象
+    out.print(response.getContentType()+"<br/>");//使用response对象
+    out.print(request.getContextPath()+"<br/>");//使用request对象
+%>
+```
+
+JSP基本语法：参考  https://www.cnblogs.com/xdp-gacl/p/3776512.html
 
 
-# 4. 专题
 
-## 加载Resource下文件
+# 五、专题
+
+## 1. 加载WEB目录下文件
+
+- 方法1：this.class.getClassLoader().getResourceAsStream("db.properties") 对应classes目录开始
 
 ```java
 // 方法1：
 Properties props = new Properties();
-props.load(JdbcUtils.class.getClassLoader().getResourceAsStream("db.properties"));
+props.load(this.class.getClassLoader().getResourceAsStream("db.properties"));
 
 // 方法2：
 InputStream is = this.getServletContext().getResourceAsStream("/WEB-INFO/classes/db.properties");
@@ -313,15 +338,40 @@ Properties pros = new Properties();
 props.load(is);
 ```
 
+- 方法2：this.getServletContext().getResourceAsStream("/WEB-INF\XXXX"))  对应webapps目录开始
 
+## 2. 中文乱码
 
+​	URLEncoder.encode("内容", "UTF-8")
 
+​	场景：1）中文名文件下载时文件名乱码；2）cookie显示中文乱码
+
+​	对应解码：URLDecoder.decode(cookies[i].getValue(), "UTF-8")
+
+## 3. 国际化
+
+​	参考 https://www.cnblogs.com/xdp-gacl/p/3945800.html
+
+​	ResourceBundle/MessageFormat/Local/DateFormat/NumberFormat
 
 ## 文件上传
 
-
+​	使用commons-flleupload.jar实现
 
 ## 文件下载
 
+1、设置响应头 content-dis     attachment;filename=URLEncoder.encode("文件名"， "utf-8")
+
+2、定义FileInputStream流fis访问本地待下载的文件
+
+3、获取resp.getOutputSteam() 
+
+4、fis.read(byte[1024]) -》输出流.write(byte[])
 
 
+
+# JDBC
+
+## 处理BLOB/CLOB数据
+
+## 处理大数据文件
