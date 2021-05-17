@@ -12,13 +12,13 @@
 
 - 引发异常的问题往往不可恢复，如数据库连接失败，SQL语法问题
 
-Spring异常体系建立在**运行期异常**基础上，开发者根据需要捕捉感兴趣的异常。
+Spring异常体系建立在==运行期异常==基础上，开发者根据需要捕捉感兴趣的异常。
 
 Spring在org.springframework.dao包中提供了**完备优雅**的DAO异常体系，继承自DataAccessException（继承自NestedRuntimeException）。NestedRuntimeException封装了源异常，用户可通过getCause()获取原始异常信息。
 
-问题：普通的JDBC的SQLException，用户通过ErrorCode和SQLState获取错误代码，然后判断原因。问题：偏底层，且ErrorCode与数据库相关。
+​	**问题**：普通的JDBC的SQLException，用户通过ErrorCode和SQLState获取错误代码，然后判断原因。问题：偏底层，且ErrorCode与数据库相关。
 
-方案：Spring以分类方法建立了异常分类目录：1）用户不关注底层细节；2）选择感兴趣异常进行处理。
+​	**方案**：Spring以分类方法建立了异常分类目录：1）用户不关注底层细节；2）选择感兴趣异常进行处理。
 
 Spring DAO异常体系：
 
@@ -51,7 +51,7 @@ Spring根据上述错误码和状态码将SQLException翻译成Spring DAO异常�
 
 ## 3. 持久化模板类jdbcTemplate
 
-Spring封装了数据库连接获取等操作，将访问流程固化到模板类中，并将数据访问中固定和变化分开，同时保证模板类是线程安全的；使得多给线程访问共享一个模板实例。访问变化的部分通过回调接口开放(定义具体数据访问和结果返回的操作)。
+​	Spring封装了数据库连接获取等操作，将访问流程固化到模板类中，并将数据访问中固定和变化分开，同时保证模板类是线程安全的；使得多给线程访问共享一个模板实例。访问变化的部分通过回调接口开放(定义具体数据访问和结果返回的操作)。
 
 ![image-20210504223034603](Spring-8-DB.assets/image-20210504223034603.png)
 
@@ -209,7 +209,7 @@ bean.xml配置
 
 ### 4.3 DriverManagerDataSource(Spring)
 
- org.springframework.jdbc.datasource.DriverManagerDataSource，实现了javax.sql.DataSource接口，不提供数据库连接池。每次getConnecton()都是获取新连接，可用于在单元测试或简单应用使用。
+ 	org.springframework.jdbc.datasource.DriverManagerDataSource，实现了javax.sql.DataSource接口，**不提供数据库连接池**。每次getConnecton()都是获取新连接，可用于在单元测试或简单应用使用。
 
 # 二、Spring JDBC访问数据库
 
@@ -244,6 +244,7 @@ spring配置文件
 <context:component-scan base-package="com.smart" />
 
 <context:property-placeholder location ="classpath:jdbc.properties" />
+
 <bean id="dataSource" class="com.apache.commons.dbcp.BasicDataSource"
       destroy-method="close"
       p:driverClassName="${jdbc.driverClassName}"
