@@ -1,4 +1,4 @@
-# 一、简介
+# 一、基本使用
 
 官网：https://mybatis.org/mybatis-3/zh/index.html
 
@@ -44,6 +44,8 @@ try (SqlSession session = sqlSessionFactory.openSession()) {
   // 你的应用逻辑代码
 }
 ```
+
+
 
 # 二、入门操作
 
@@ -151,6 +153,9 @@ INSERT INTO 'user' ('id', 'name', 'pwd') VALUES
 3. 创建POJO对象
 
    ```java
+   @Getter
+   @Setter
+   @Data
    public class User {
        private int id;
        private String name;
@@ -161,46 +166,13 @@ INSERT INTO 'user' ('id', 'name', 'pwd') VALUES
            this.name = name;
            this.pwd = pwd;
        }
-   
-       public int getId() {
-           return id;
-       }
-   
-       public void setId(int id) {
-           this.id = id;
-       }
-   
-       public String getName() {
-           return name;
-       }
-   
-       public void setName(String name) {
-           this.name = name;
-       }
-   
-       public String getPwd() {
-           return pwd;
-       }
-   
-       public void setPwd(String pwd) {
-           this.pwd = pwd;
-       }
-   
-       @Override
-       public String toString() {
-           return "User{" +
-                   "id=" + id +
-                   ", name='" + name + '\'' +
-                   ", pwd='" + pwd + '\'' +
-                   '}';
-       }
    }
    ```
-
+   
 4. 定义Dao接口
 
    ```java
-   public interface UserDao {
+   public interface UserMapper {
        public List<User> getUserList();
    }
    ```
@@ -214,7 +186,7 @@ INSERT INTO 'user' ('id', 'name', 'pwd') VALUES
            "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
    
    <!-- 绑定一个对应的Dao/Mapper接口，不用生成对应的DaoImpl -->
-   <mapper namespace="com.test.dao.UserDao">
+   <mapper namespace="com.test.dao.UserMapper">
        <select id="getUserList" resultType="com.test.pojo.User">
            select * from mybatis.User
        </select>
@@ -231,13 +203,46 @@ public class UserDaoTest extends TestCase {
         SqlSession sqlSession = MybatisUtils.getSqlSession();
 
         // 获取Mapper对象
-        UserDao userDao = sqlSession.getMapper(UserDao.class);
-        List<User> userList = userDao.getUserList();
+        UserMapper userMapper = sqlSession.getMapper(UserMapper.class);
+        List<User> userList = userMapper.getUserList();
 
         sqlSession.close();
     }
 }
 ```
 
+# 三、注意点
+
+增删改场景，需要执行提交事务语句，相关语句才会执行
 
 
+
+# 四、myBatis与Spring集成
+
+pom依赖
+
+
+
+# 五、普通SQL命令
+
+## SELECT
+
+## INSERT
+
+## UPDATE
+
+## DELETE
+
+
+
+## 其他语法
+
+### ResultMap
+
+
+
+# 六、动态语句
+
+if
+
+foreach

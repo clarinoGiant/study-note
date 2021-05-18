@@ -51,7 +51,7 @@ Spring根据上述错误码和状态码将SQLException翻译成Spring DAO异常�
 
 ## 3. 持久化模板类jdbcTemplate
 
-​	Spring封装了数据库连接获取等操作，将访问流程固化到模板类中，并将数据访问中固定和变化分开，同时保证模板类是线程安全的；使得多给线程访问共享一个模板实例。访问变化的部分通过回调接口开放(定义具体数据访问和结果返回的操作)。
+​	Spring封装了数据库连接获取等操作，将访问流程固化到模板类中，并将数据访问中固定和变化分开，同时保证**模板类是线程安全**的；使得多给线程访问共享一个模板实例。访问变化的部分通过回调接口开放(定义具体数据访问和结果返回的操作)。
 
 ![image-20210504223034603](Spring-8-DB.assets/image-20210504223034603.png)
 
@@ -423,8 +423,10 @@ public void addForum(Forum forum) {
   public interface PlatformTransactionManager {
       // 根据事务定义返回一个已存在的事务或创建一个新事务
       TransactionStatus getTransaction(TransactionDefinition definition) throws TransactionException;
+      
       // 根据事务的状态提交事务。如果事务状态标识为rollback-only，则方法将执行一个回滚事务操作
       void commit(TransactionStatus status) throws TransactionException;
+      
       // 将事务回滚，当commit()异常时，rollback方法会隐式调用
       void rollback(TransactionStatus status) throws TransactionException;
   }
