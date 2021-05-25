@@ -1,4 +1,31 @@
+- [一、基础知识](#一基础知识)
+  - [1. AOP产生背景](#1-aop产生背景)
+  - [2. AOP 典型应用场景](#2-aop-典型应用场景)
+  - [3. 术语](#3-术语)
+    - [3.1 通知（Advice）](#31-通知advice)
+    - [3.2 连接点（Join point）](#32-连接点join-point)
+    - [3.3 切点（Pointcut）](#33-切点pointcut)
+    - [3.4 切面（Aspect）](#34-切面aspect)
+    - [3.5 引入（Introduction）](#35-引入introduction)
+    - [3.6 织入（Weaving）](#36-织入weaving)
+- [二. 通过切点来选择连接点](#二-通过切点来选择连接点)
+  - [1. AspectJ 指示器](#1-aspectj-指示器)
+  - [2. 编写切点](#2-编写切点)
+  - [3. 在切点中选择 bean](#3-在切点中选择-bean)
+- [三、使用注解创建切面](#三使用注解创建切面)
+  - [1. 定义切面](#1-定义切面)
+  - [2. 创建@Around Advice](#2-创建around-advice)
+  - [3. 处理Advice中参数](#3-处理advice中参数)
+- [四、XML中声明切面](#四xml中声明切面)
+  - [1. 使用XML声明通知](#1-使用xml声明通知)
+  - [2. 声明环绕通知](#2-声明环绕通知)
+  - [3. 为通知传递参数](#3-为通知传递参数)
+- [五、典型使用](#五典型使用)
+  - [1. 封装异常处理](#1-封装异常处理)
+- [六、其他](#六其他)
+
 https://potoyang.gitbook.io/spring-in-action-v4
+
 
 # 一、基础知识
 
@@ -344,11 +371,6 @@ public class TrackCounterConfig {
 
 ```java
 import static org.junit.Assert.*;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.contrib.java.lang.system.StandardOutputStreamLog;
-import org.junit.runner.RunWith;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -357,16 +379,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes=TrackCounterConfig.class)
 public class TrackCounterTest {
-
   @Rule
   public final StandardOutputStreamLog log = new StandardOutputStreamLog();
-
   @Autowired
-  private CompactDisc cd;
-  
+  private CompactDisc cd; 
   @Autowired
   private TrackCounter counter;
-
   @Test
   public void testTrackCounter() {
     cd.playTrack(1);
@@ -552,8 +570,7 @@ XML配置：
     http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans.xsd" >
   
-  <bean id="trackCounter" class="soundsystem.TrackCounter" />
-  
+  <bean id="trackCounter" class="soundsystem.TrackCounter" />  
   <bean id="cd" class="soundsystem.BlackDisc" >
     <property name="title" value="Sgt. Pepper's Lonelt Hearts Club Band" />
     <property name="artist" value="The Beatles" />
@@ -562,8 +579,6 @@ XML配置：
         <value>Sgt. Pepper's Lonely Hearts Club Band</value>
         <value>Lucy in the Sky with Diamonds</value>
         <value>Getting Better</value>
-        <value>Fixing a Hole</value>
-        <!-- ...other tracks omitted for brevity... -->
       </list>
     </property>
   </bean>
