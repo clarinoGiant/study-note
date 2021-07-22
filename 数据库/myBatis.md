@@ -220,7 +220,9 @@ public class UserDaoTest extends TestCase {
 # 四、myBatis与Spring集成
 
 pom依赖
-
+Free Mybatis Plugin使用
+mybatis generator
+MybatisX: https://baomidou.com/guide/mybatisx-idea-plugin.html
 
 
 # 五、普通SQL命令
@@ -240,9 +242,10 @@ pom依赖
 ### ResultMap
 
 
-
 # 六、动态语句
 
 if
 
 foreach
+
+# 七、Mybatis实现原理
