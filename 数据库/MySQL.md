@@ -86,7 +86,58 @@ v5.5.8前的默认存储引擎
 
 ![image-20210808210029345](MySQL.assets/image-20210808210029345.png)
 
+### 后台线程
 
+#### 1. Master线程
+
+   缓存池中数据异步刷新到磁盘，保证数据一致性。
+
+#### 2. IO线程
+
+​	负责IO（AIO处理写IO请求）请求回调。
+
+​    配置项：
+
+- innodb_read_io_threads:
+- innodb_write_io_threads:
+
+![image-20210808225047852](MySQL.assets/image-20210808225047852.png)
+
+#### 3. Purge线程
+
+​	回收已经使用并分配的undo页
+
+#### 4. Page Cleaner线程
+
+​	脏页的刷新；减轻原Master Thread工作及对用户查询线程的阻塞，进一步提高InnoDB存储引擎的性能。
+
+### 内存
+
+#### 1. 缓冲池
+
+   配置项： innodb_buffer_pool_size
+
+​	数据库读取页操作，先将磁盘读取的页放缓冲池，下次读取相同页，优选缓冲池读取。
+
+   ==对数据库中页修改操作，先该缓冲池中页，再一定频率刷新磁盘。==
+
+> 页从缓冲区刷回磁盘操作由checkpoint机制刷新回磁盘，非每次页发生变更时触发。--》提升数据库性能。
+
+允许有多个缓冲池实例： ==innodb_buffer_pool_instances==
+
+![image-20210808225533751](MySQL.assets/image-20210808225533751.png)
+
+#### 2. LRU List、Free List和Flush List
+
+​	缓冲池页大小默认16K。
+
+   InnoDB使用优化后的LRU算法，每次新数据放到midpoint位置。 --》 midpoint insertation stragegy。
+
+  ==配置项： innodb_old_blocks_pct 控制插入的位置百分比；==
+
+==innodb_old_blocks_time 页面读取到mid位置后续等待多久才计入LRU列表热端。==
+
+>  使用midpoint原因：如果直接方首部，某些SQL操作可能使缓冲池中页被刷出，影响缓冲池效率。比如索引或数据的扫描操作。这类操作需访问表中很多页或全部页，某些页仅在当前查询中需要，并不是活跃的热点数据。如果页直接放LRU首部，可能将需要的热点数据页从LRU表移除，导致下次访问时需再次访问磁盘。
 
 
 
