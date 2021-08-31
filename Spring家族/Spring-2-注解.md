@@ -674,10 +674,37 @@ public CurcuitFilter transferToLeader() {
 
 ## 7.2 Spring注解编程模型
 
-- 元注解Meta-Annotation
-- spring模式注解
-- spring组合注解
-- 注解属性别名和覆盖
+### 1. Meta-Annotation
+
+> an annotation that is declared on another annotation. 
+
+如@Document
+
+### 2. Stereotype Annotations
+
+> an annotation that is used to declare the role that a component plays within the application
+
+`@Repository` annotation in the Spring Framework is a marker for any class that fulfills the role or *stereotype* of a repository (also known as Data Access Object or DAO).
+
+`@Component` is a generic stereotype for any Spring-managed component. Any component annotated with `@Component` is a candidate for component scanning. 
+
+@Component, @Service, @Repository, @Controller, @RestController, @Configuration, @Repository, @Service
+
+### 3.  Composed Annotations
+
+> an annotation that is *meta-annotated* with one or more annotations with the intent of combining the behavior associated with those meta-annotations into a single custom annotation.
+
+`@TransactionalService`  is meta-annotated with Spring's `@Transactional` and `@Service` annotations 
+
+### 4. Attribute Aliases and Overrides
+
+> An ***attribute alias*** is an alias from one annotation attribute to another annotation attribute. 
+
+@AliasFor
+
+> An ***attribute override*** is an annotation attribute that *overrides* (or *shadows*) an annotation attribute in a meta-annotation.
+
+ @One , @Two
 
 参考： [Spring Annotation Programming Model · spring-projects/spring-framework Wiki (github.com)](https://github.com/spring-projects/spring-framework/wiki/Spring-Annotation-Programming-Model)
 
