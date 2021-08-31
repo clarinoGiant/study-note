@@ -629,9 +629,55 @@ public static void main(String[] args) {
 
 ```java
 @Conditional(ConditionDistributedEmbedStorage.class)
-    @Bean
-    public CurcuitFilter transferToLeader() {
-        return new CurcuitFilter();
+@Bean
+public CurcuitFilter transferToLeader() {
+     return new CurcuitFilter();
 }    
 ```
+
+
+
+# 七. 极客时间
+
+## 7.1 核心注解场景分类
+
+- Spring模式注解
+
+  | 注解           | 说明           | 起始版本 |
+  | -------------- | -------------- | -------- |
+  | @Repository    |                | 2.0      |
+  | @Component     |                | 2.5      |
+  | @Service       |                | 2.5      |
+  | @Controller    |                | 2.5      |
+  | @Configuration | 配置类模式注解 | 3.0      |
+
+  
+
+- 装配注解
+
+  | 注解            | 说明                                    | 起始版本 |
+  | --------------- | --------------------------------------- | -------- |
+  | @ImportResource | 替换XML元素<import>                     | 2.5      |
+  | @Import         | 导入Configuration类                     | 2.5      |
+  | @ComponentScan  | 扫描指定package下标注Spring模式注解的类 | 3.1      |
+
+  
+
+- 依赖注入注解
+
+  | 注解       | 说明                                             | 起始版本 |
+  | ---------- | ------------------------------------------------ | -------- |
+  | @Autowired | 支持多种依赖注入查找方式：字段、构造函数、setter | 2.5      |
+  | @Qualifier | 细粒度Autowired依赖查找                          | 2.5      |
+
+
+
+## 7.2 Spring注解编程模型
+
+- 元注解Meta-Annotation
+- spring模式注解
+- spring组合注解
+- 注解属性别名和覆盖
+
+参考： [Spring Annotation Programming Model · spring-projects/spring-framework Wiki (github.com)](https://github.com/spring-projects/spring-framework/wiki/Spring-Annotation-Programming-Model)
 
