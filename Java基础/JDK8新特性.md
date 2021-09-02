@@ -283,22 +283,13 @@ Thread t = new Thread(() -> System.out.println("Hello world"));
 
 # 四、函数式接口
 
-使用@FunctionalInterface定义的接口
+使用@FunctionalInterface注解定义的接口，且里面只有一个抽象方法
 
 ## 1. 原有函数式接口
 
-```java
- java.lang.Runnable
- java.util.concurrent.Callable
- java.security.PrivilegedAction
- java.util.Comparator
- java.io.FileFilter
- java.nio.file.PathMatcher
- java.lang.reflect.InvocationHandler
- java.beans.PropertyChangeListener
- java.awt.event.ActionListener
- javax.swing.event.ChangeListener
-```
+Runnable、Callable、PrivilegedAction、Comparator、FileFilter、PathMatcher、InvocationHandler
+
+PropertyChangeListener、java.awt.event.ActionListener、javax.swing.event.ChangeListener
 
 ## 2. 新增函数式接口
 
