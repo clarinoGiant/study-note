@@ -877,7 +877,7 @@ jdbc.username=root
 jdbc.password=123456
 ```
 
-- 方法1：PropertyPlaceholderConfigure引入
+- 方法1：**PropertyPlaceholderConfigure引入**
 
   ```xml
   <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
@@ -896,8 +896,12 @@ jdbc.password=123456
   其他属性：
 
   1. locations：指定多个属性文件，类似配置List方式
+
   2. fileEncoding: 文件编码方式，Spring使用操作系统默认编码读取属性，如属性采用特殊编码，需显示配置
+
   3. order：如果定义了多个PropertyPlaceholderConfigurer，通过该参数指定优先顺序
+
+     
 
 - **方法2：<context:property-plceholder 引入（常用，优雅）**
 
@@ -938,7 +942,7 @@ jdbc.password=123456
    url=jdbc:mysql://localhost:3306/sys
    userName=root
    password=1qahvoiuc!@d
-   ```   
+   ```
 2. 自定义类继承PropertyPlaceHolderConfigurer
 
    ```java
@@ -1025,7 +1029,6 @@ Locale locale5 = Locale.getDefault();
   执行结果：￥123,456.78
   ```
   
-
 - DateFormat
 
   ```java
