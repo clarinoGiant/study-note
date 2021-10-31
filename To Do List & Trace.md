@@ -23,13 +23,13 @@
 ## 2.1 Spring 家族
 
 - 极客时间：Spring
-- 《精通spring4.x企业应用开发实战》
-- 《【狂神说Java】SpringBoot教程》：已完成1-10，
+- 《精通spring 4.x企业应用开发实战》
+- 《【狂神说Java】Spring Boot教程》：已完成1-14，
 
 ## 2.2 WEB开发
 
 - 入门：孤傲苍狼的Java WEB系列技术博客 https://www.cnblogs.com/xdp-gacl/p/3871730.html 
-- 狂神说：JavaWeb入门到实战（~JDBC事务）  20210425
+- 狂神说：Java Web入门到实战（~JDBC事务）  20210425
 
 ## 2.3 架构
 
