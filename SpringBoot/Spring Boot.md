@@ -66,6 +66,18 @@ SpringBootApplication
 - 找出所有应用监听器，设置到listener中
 - 推断并设置main方法的定义类，找到运行的主类
 
+## 2、常用注解
+
+@Import
+
+@EnableConfigurationProperties
+
+
+
+
+
+
+
 # 应用篇
 
 ## 1、指定属性
@@ -217,15 +229,26 @@ public class Person {
 
 ![image-20211031182317966](Spring Boot.assets/image-20211031182317966.png)
 
-## 3、多环境配置
+## 3、多环境配置 -TODO
+
+https://www.bilibili.com/video/BV1PE411i7CV?p=11
 
 
 
+# WEB开发
 
+## 1、导入静态资源
 
+参考： https://www.bilibili.com/video/BV1PE411i7CV?p=14
 
+参考： WebMvcAutoConfiguration
 
+![image-20211031223604018](Spring Boot.assets/image-20211031223604018.png)
 
-
-
+```java
+EnableWebMvcConfiguration
+    - 定义spring mvc的各种配置
+WebMvcAutoConfigurationAdapter
+	- WebMvcConfigurer
+```
 
