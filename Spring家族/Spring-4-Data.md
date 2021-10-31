@@ -14,7 +14,7 @@
 
 ## 3. Redis操作
 
-### 3.1 基础使用：Jedis/Lettuce连接工厂
+### 1、基础使用：Jedis/Lettuce连接工厂
 
 Spring Data Redis 为四种 Redis 客户端实现提供了连接工厂：
 
@@ -60,7 +60,7 @@ byte[] greetingBytes = conn.get("greeting".getBytes());
 String greeting = new String(greetingBytes());      
 ```
 
-### 3.2 高级使用：RedisTemplate
+### 2、高级使用：RedisTemplate
 
 Spring Data Redis 提供了两个模板，简化 Redis 数据访问：
 
@@ -123,7 +123,52 @@ Product random = redis.opsForSet().randomMember("cart");
 
 
 
-### 3.3 序列化
+### 3、序列化
 
 因为涉及到网络传输，所以针对复杂对象必然涉及到数据序列化和反序列化诉求。
+
+
+
+## 4. Elastic Search操作
+
+>  ElasticSearchRepository 不如 ElasticSearchTemplate提供更强的查询功能
+
+### 1、ElasticSearchRepository
+
+```java
+ElasticsearchRepository  定义 searchSimilar
+    - PagingAndSortingRepository  定义 findAll(Sort) 和 findAll(Pageable)
+    	- CrudRepository  定义save、findById、findAll、findAllById、count、delete、deleteById、deleteAll...
+    		- Repository 空接口
+```
+
+​	
+
+### 2、ElasticSearchRestTemplate
+
+```java
+ElasticsearchRestTemplate  定义indexOps、doBulkOperation、bulkUpdate、delete、search等
+	- AbstractElasticsearchTemplate 定义save、search、delete、bulkIndex等
+    	- ElasticsearchOperations  定义indexOps、cluster()等
+    	- ApplicationContextAware
+    
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
