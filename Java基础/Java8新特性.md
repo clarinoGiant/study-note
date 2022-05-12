@@ -454,6 +454,104 @@ Map<Buyer, List<Transaction>> salesByBuyer
 
 
 
+# CompletableFuture
+
+## 美团外卖商家API的异步化
+
+https://mp.weixin.qq.com/s/GQGidprakfticYnbVYVYGQ
+
+## 原理
+
+可以将多个依赖操作通过不同的方式进行编排，例如CompletableFuture提供thenCompose、thenCombine等各种then开头的方法，这些方法就是对“可组合”特性的支持。
+
+CompletableFuture实现了两个接口：
+
+- Future: Future表示异步计算的结果
+
+- CompletionStage: CompletionStage用于表示异步执行过程中的一个步骤（Stage），这个步骤可能是由另外一个CompletionStage触发的，随着当前步骤的完成，也可能会触发其他一系列CompletionStage的执行。从而我们可以根据实际业务对这些步骤进行多样化的编排组合，CompletionStage接口正是定义了这样的能力，我们可以通过其提供的thenAppy、thenCompose等函数式编程方法来组合编排这些步骤。
+
+
+
+CompletableFuture中包含两个字段：**result**和**stack**。result用于存储当前CF的结果，stack（Completion）表示当前CF完成后需要触发的依赖动作（Dependency Actions），去触发依赖它的CF的计算，依赖动作可以有多个（表示有多个依赖它的CF），以栈（[Treiber stack](https://en.wikipedia.org/wiki/Treiber_stack)）的形式存储，stack表示栈顶元素。
+
+> 更深入原理，参考上面美团技术文档
+
+
+
+## 实际样例
+
+#### 样例1
+
+``` java
+ExecutorService executor = Executors.newFixedThreadPool(5);
+CompletableFuture<String> cf1 = CompletableFuture.supplyAsync(() -> {
+    System.out.println("执行step 1");
+    return "step1 result";
+}, executor);
+
+CompletableFuture<String> cf2 = CompletableFuture.supplyAsync(() -> {
+    System.out.println("执行step 2");
+    return "step2 result";
+});
+
+cf1.thenCombine(cf2, (result1, result2) -> {
+    System.out.println(result1 + " , " + result2);
+    System.out.println("执行step 3");
+    return "step3 result";
+}).thenAccept(result3 -> System.out.println(result3));
+```
+
+#### 样例2
+
+![image-20220512230302405](Java8新特性.assets/image-20220512230302405.png)
+
+在使用CompletableFuture进行异步化编程时，图中的每个步骤都会产生一个CompletableFuture对象
+
+```java
+ExecutorService executor = Executors.newFixedThreadPool(5);
+//1、使用runAsync或supplyAsync发起异步调用
+CompletableFuture<String> cf1 = CompletableFuture.supplyAsync(() -> {
+  return "result1";
+}, executor);
+//2、CompletableFuture.completedFuture()直接创建一个已完成状态的CompletableFuture
+CompletableFuture<String> cf2 = CompletableFuture.completedFuture("result2");
+
+// 一元依赖
+CompletableFuture<String> cf3 = cf1.thenApply(result1 -> {
+  //result1为CF1的结果
+  //......
+  return "result3";
+});
+
+// 二元依赖
+CompletableFuture<String> cf4 = cf1.thenCombine(cf2, (result1, result2) -> {
+  //result1和result2分别为cf1和cf2的结果
+  return "result4";
+});
+
+// 多元依赖
+CompletableFuture<Void> cf6 = CompletableFuture.allOf(cf3, cf4, cf5);
+CompletableFuture<String> result = cf6.thenApply(v -> {
+  //这里的join并不会阻塞，因为传给thenApply的函数是在CF3、CF4、CF5全部完成时，才会执行 。
+  result3 = cf3.join();
+  result4 = cf4.join();
+  result5 = cf5.join();
+  //根据result3、result4、result5组装最终result;
+  return "result";
+});
+
+
+```
+
+
+
+
+
 
 
 # 时间日期
+
+
+
+
+
