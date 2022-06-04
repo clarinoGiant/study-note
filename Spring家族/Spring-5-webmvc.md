@@ -2,6 +2,32 @@
 
 
 
+# 接口扩展
+
+## WebMvcConfigurer
+
+样例
+
+![image-20220604174922082](Spring-5-webmvc.assets/image-20220604174922082.png)
+
+
+
+
+
+
+
+
+
+# 模板引擎
+
+## Themleaf
+
+标签
+
+![image-20220604171358070](Spring-5-webmvc.assets/image-20220604171358070.png)
+
+
+
 
 
 # Rest client

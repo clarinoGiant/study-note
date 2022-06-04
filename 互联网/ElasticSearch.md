@@ -4,6 +4,8 @@
 
 ​	倒排索引
 
+![image-20220604171129153](ElasticSearch.assets/image-20220604171129153.png)
+
 ### 概念
 
 - 索引Index =》Table

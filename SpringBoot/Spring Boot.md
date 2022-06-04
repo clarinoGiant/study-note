@@ -10,7 +10,7 @@ https://www.baeldung.com/spring-boot
 
 # 原理篇
 
-## 1、自动装配原理
+## 1、自动装配原理autoconfigure
 
 ​	https://www.bilibili.com/video/BV1PE411i7CV?p=6
 
@@ -37,7 +37,7 @@ spring-boot-starter-parent 核心依赖在父工程中，定义了源码、资�
 
   
 
-
+![image-20220604171030118](Spring Boot.assets/image-20220604171030118.png)
 
 ### 注解SpringBootApplication
 
@@ -251,4 +251,12 @@ EnableWebMvcConfiguration
 WebMvcAutoConfigurationAdapter
 	- WebMvcConfigurer
 ```
+
+## 2、自动配置
+
+
+
+
+
+
 
