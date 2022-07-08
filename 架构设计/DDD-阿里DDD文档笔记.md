@@ -430,7 +430,7 @@ public void pay(Money money, Currency targetCurrency, Long recipientId) {
 
 ​	Domain Primitive 是一个在特定领域里，拥有精准定义的、可自我验证的、拥有行为的 Value Object 。
 
-   		DP是一个传统意义上的Value Object，拥有Immutable的特性
+   	DP是一个传统意义上的Value Object，拥有Immutable的特性
 
 ​		   DP是一个完整的概念整体，拥有精准定义
 
@@ -769,6 +769,8 @@ public class Account {
 Command: 创建、配置和修改
 
 Query：
+
+
 
 
 
