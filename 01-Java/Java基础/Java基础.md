@@ -1,10 +1,14 @@
 # 一、参考文档
 
+
+
+
+
 ## 1. Oracle官网
 
 以官网JDK15相关链接说明。https://docs.oracle.com/en/java/javase/15/
 
-![image-20210308231120043](Java基础.assets/image-20210308231120043.png)
+![image-20210308231120043](images/Java基础/image-20210308231120043.png)
 
 ## 2. Java Tutorials(入门学习路线)
 
@@ -12,7 +16,7 @@ https://docs.oracle.com/javase/tutorial/tutorialLearningPaths.html
 
 > 提供了最系统、清晰简洁的java知识
 
-![image-20210308225853072](Java基础.assets/image-20210308225853072.png)
+![image-20210308225853072](images/Java基础/image-20210308225853072.png)
 
 
 
@@ -20,7 +24,7 @@ https://docs.oracle.com/javase/tutorial/tutorialLearningPaths.html
 
 
 
-![image-20220604175508346](Java基础.assets/image-20220604175508346.png)
+![image-20220604175508346](images/Java基础/image-20220604175508346.png)
 
 
 
@@ -42,7 +46,7 @@ Package：  java.lang.annotation
 
 参考自JDK帮助文安定
 
-![image-20210310225423997](Java基础.assets/image-20210310225423997.png)
+![image-20210310225423997](images/Java基础/image-20210310225423997.png)
 
 ## 3.1 注解框架
 
@@ -54,7 +58,7 @@ Package：  java.lang.annotation
 
 常见实现类Override、Target、Retention、
 
-![image-20210310224152033](Java基础.assets/image-20210310224152033.png)
+![image-20210310224152033](images/Java基础/image-20210310224152033.png)
 
 ### 2 Enum汇总
 
@@ -62,17 +66,17 @@ Package：  java.lang.annotation
 
 ​      The constants of this enumerated type provide a simple classification of the syntactic（语法） locations where annotations may appear in a Java program.
 
-![image-20210310224549945](Java基础.assets/image-20210310224549945.png)
+![image-20210310224549945](images/Java基础/image-20210310224549945.png)
 
    
 
 - **RetentionPolicy**
 
-![image-20210310224605411](Java基础.assets/image-20210310224605411.png)
+![image-20210310224605411](images/Java基础/image-20210310224605411.png)
 
 ### 3 Annotation Types汇总
 
-![image-20210310224726075](Java基础.assets/image-20210310224726075.png) 
+![image-20210310224726075](images/Java基础/image-20210310224726075.png) 
 
 #### 3.1 Retention
 
@@ -165,7 +169,7 @@ method annotation: @com.demo.annotation.MyAnnotation(name=wangwu, value=456)
 
 ​	Autowired注解实现
 
-![image-20210310235022919](Java基础.assets/image-20210310235022919.png)
+![image-20210310235022919](images/Java基础/image-20210310235022919.png)
 
 ```java
 	public static boolean isAutowirable(Parameter parameter, int parameterIndex) {

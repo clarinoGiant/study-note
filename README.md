@@ -1,3 +1,14 @@
+### 参考材料：
+
+中华石杉  java互联网工程师1-3季
+极客时间
+
+### 目录生成
+
+- 通常使用Typora->段落->目录生成，但是上传github无法显示。
+- 解决方案：使用vscode 插件 markdown all in one中 Create Tables of Content生成，上传Github显示正常
+
+
 
 记录个人的学习笔记
 
@@ -7,11 +18,6 @@
 4. git clone本地
 5. 本地修改
 6. git status/add ./commit -a/push
-
-目录生成
-
-- 通常使用Typora->段落->目录生成，但是上传github无法显示。
-- 解决方案：使用vscode 插件 markdown all in one中 Create Tables of Content生成，上传Github显示正常
 
 
 
