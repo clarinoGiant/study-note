@@ -1,9 +1,5 @@
 # 一、参考文档
 
-
-
-
-
 ## 1. Oracle官网
 
 以官网JDK15相关链接说明。https://docs.oracle.com/en/java/javase/15/
@@ -18,27 +14,11 @@ https://docs.oracle.com/javase/tutorial/tutorialLearningPaths.html
 
 ![image-20210308225853072](images/Java基础/image-20210308225853072.png)
 
-
-
 # 二、核心API
-
-
 
 ![image-20220604175508346](images/Java基础/image-20220604175508346.png)
 
-
-
-
-
-
-
 # 反射
-
-
-
-
-
-
 
 # 三、注解
 
@@ -68,8 +48,6 @@ Package：  java.lang.annotation
 
 ![image-20210310224549945](images/Java基础/image-20210310224549945.png)
 
-   
-
 - **RetentionPolicy**
 
 ![image-20210310224605411](images/Java基础/image-20210310224605411.png)
@@ -80,17 +58,13 @@ Package：  java.lang.annotation
 
 #### 3.1 Retention
 
-​	与RetentionPolicy配合使用
+​    与RetentionPolicy配合使用
 
 #### 3.2 Target
 
-​	与ElementType配合使用
+​    与ElementType配合使用
 
 ## 3.2 测试样例
-
-
-
-
 
 ## 3.3 作用机理
 
@@ -167,39 +141,31 @@ method annotation: @com.demo.annotation.MyAnnotation(name=wangwu, value=456)
 
 5、参考：Spring 注解原理
 
-​	Autowired注解实现
+​    Autowired注解实现
 
 ![image-20210310235022919](images/Java基础/image-20210310235022919.png)
 
 ```java
-	public static boolean isAutowirable(Parameter parameter, int parameterIndex) {
-		Assert.notNull(parameter, "Parameter must not be null");
-		AnnotatedElement annotatedParameter = getEffectiveAnnotatedParameter(parameter, parameterIndex);
-		return (AnnotatedElementUtils.hasAnnotation(annotatedParameter, Autowired.class) ||
-				AnnotatedElementUtils.hasAnnotation(annotatedParameter, Qualifier.class) ||
-				AnnotatedElementUtils.hasAnnotation(annotatedParameter, Value.class));
-	}
+    public static boolean isAutowirable(Parameter parameter, int parameterIndex) {
+        Assert.notNull(parameter, "Parameter must not be null");
+        AnnotatedElement annotatedParameter = getEffectiveAnnotatedParameter(parameter, parameterIndex);
+        return (AnnotatedElementUtils.hasAnnotation(annotatedParameter, Autowired.class) ||
+                AnnotatedElementUtils.hasAnnotation(annotatedParameter, Qualifier.class) ||
+                AnnotatedElementUtils.hasAnnotation(annotatedParameter, Value.class));
+    }
 ```
-
-
 
 # 四、集合
 
 ## 4.1 集合分类
 
-
-
-
-
 ## 4.2 Collections工具类
-
-
 
 ## 4.3 样例
 
-​	Collections.singletonList("localhost:9092")
+​    Collections.singletonList("localhost:9092")
 
-​	Collections.emptyList()
+​    Collections.emptyList()
 
 # 五、零碎知识
 
@@ -231,7 +197,7 @@ WeakHashMap：弱引用
 
  **参考：https://zhuanlan.zhihu.com/p/62212361** 
 
- ### **1. 单类的初始化顺序**   
+### **1. 单类的初始化顺序**
 
 静态变量 > 静态初始块 > 成员变量 > 非静态初始块 > 构造器 
 
@@ -334,8 +300,6 @@ static field B
 
 ==它们的在类中的顺序就决定了它们的初始化顺序，而不是变量一定会优先于初始块。==
 
-
-
 ## 5.3 字符串操作
 
 ### 1 字符串拼接
@@ -357,6 +321,3 @@ StringJoiner sj = new StringJoiner(",", "[", "]");
 sj.add("George").add("Sally").add("Fred").add("Lily");
 System.out.println(sj.toString());
 ```
-
-
-

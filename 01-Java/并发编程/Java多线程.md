@@ -1,10 +1,4 @@
-
-
 ### 一、JUC家族
-
-
-
-
 
 ### 二、锁的基本获取和释放
 
@@ -22,13 +16,9 @@ native void notify();
 native void notifyAll(); 
 ```
 
-
-
 > 使用要求必须首先获取当前对象monitor，否则提示“IllegalMonitorStateException”
 
 样例：
-
-
 
 #### 2.2 高阶用法（JDK 1.5)
 
@@ -59,7 +49,7 @@ Condition newCondition();
 ```
 
 1. Lock的使用
-
+   
    ```java
    Lock lock = ...;
    lock.lock();
@@ -67,31 +57,25 @@ Condition newCondition();
    lock.unlock;
    ```
 
-   
-
 2. tryLock使用
 
 ```java
 Lock lock = ...;
 if (lock.tryLock()) {
     try {
-    	  // manipulate protected state
-  	} finally {
-    	lock.unlock();    // 释放锁
-  	}
+          // manipulate protected state
+      } finally {
+        lock.unlock();    // 释放锁
+      }
  } else {
     // perform alternative actions
  }
 ```
 
-
-
-
-
 ##### 2.2.2 LockSupport::park/parkNanos/unpark
 
 > 静态方法，直接使用
->
+> 
 > 效果类似Object::wait和notify
 
 ```java
@@ -100,7 +84,7 @@ if (lock.tryLock()) {
 // 1）当前其他线程出发当前线程unpark方法；2）其他线程interrupt当前线程；
 static void park()
 static void park(Object blocker) 
-    
+
 // If the permit is available then it is consumed 直接返回
 // 否则阻塞，直至满足如下条件
 // 1）当前其他线程出发当前线程unpark方法；2）其他线程interrupt当前线程；3）超时时间到
@@ -114,7 +98,7 @@ static void unpark(Thread thread)
 ```
 
 1. 基本使用样例
-
+   
    ```java
    public static void main(String[] args) {
         Thread thread1 = new Thread(() -> {
@@ -131,17 +115,11 @@ static void unpark(Thread thread)
    }
    ```
 
-   
-
 2. 
-
-
 
 ### 三、锁的进阶
 
 #### 3.1 AbstractQueuedSynchronizer(AQS)
-
-
 
 #### 3.2 Condition(接口)
 
@@ -157,27 +135,13 @@ void signal();
 void signalAll();
 ```
 
-
-
 #### 3.3 ReadWriteLock
-
-
 
 #### 3.4 ReentrantLock
 
-
-
 #### 3.5 ReentrantReadWriteLock
 
-
-
 #### 3.6 StampedLock
-
-
-
-
-
-
 
 ### 三、接口BlockingQueue(JDK1.5)
 
@@ -185,20 +149,17 @@ void signalAll();
 
 ##### 4.1.1 基本操作
 
- ```java
+```java
 // 队列满提示队列满异常
 add(Object)
 // true：入队成功；false：入队失败
 boolean offer(Object)
 // 出队列
-
- ```
-
-
+```
 
 ##### 4.1.2  阻塞入和出队列(生产者消费者)
 
-``` java
+```java
 put(Object)   // 阻塞直到队列有空闲
 take()  // 阻塞直到有数据可以获取
 ```
@@ -209,11 +170,7 @@ take()  // 阻塞直到有数据可以获取
 
 ```
 
-
-
 #### 4.2 ArrayListBlockingQueue
-
-
 
 代码样例
 
@@ -227,27 +184,15 @@ take()  // 阻塞直到有数据可以获取
 
 ```
 
-
-
 ### 五、同步工具类(JDK 1.5)
 
 #### 5.1 CountDownLatch
 
-
-
 #### 5.2 CyclicBarrier
-
-
 
 #### 5.3 Exchanger
 
-
-
 #### 5.4 Semaphore
-
-
-
-
 
 ## 参考：源码类图
 
@@ -256,8 +201,3 @@ take()  // 阻塞直到有数据可以获取
  **ExecutorService pool = Executors.newFixedThreadPool(5);**  
 
 ![1617595062141](Java多线程.assets/1617595062141.png)
-
-
-
-
-
